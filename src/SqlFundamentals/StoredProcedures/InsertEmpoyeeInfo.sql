@@ -2,7 +2,7 @@
     @EmployeeName nvarchar(100) = NULL,
     @FirstName nvarchar(50) = NULL,
     @LastName nvarchar(50) = NULL,
-    @CompanyName nvarchar(20),
+    @CompanyName nvarchar(50),
     @Position nvarchar(50) = NULL,
     @Street nvarchar(50),
     @City nvarchar(20) = NULL,
@@ -30,7 +30,7 @@ AS
                 SET @b = @@IDENTITY;
 
                 INSERT INTO dbo.Employee
-                VALUES (@b, @a, @CompanyName, @Position, @EmployeeName);
+                VALUES (@b, @a, LEFT(@CompanyName, 20), @Position, @EmployeeName);
             COMMIT TRAN EMPLOYEE_ADD
         END
     END
