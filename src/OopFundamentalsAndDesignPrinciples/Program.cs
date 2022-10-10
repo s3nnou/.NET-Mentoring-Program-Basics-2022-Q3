@@ -1,9 +1,6 @@
-﻿using ConsoleTools;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using OopFundamentalsAndDesignPrinciples.Services;
-using Spectre.Console;
-using System;
 using OopFundamentalsAndDesignPrinciples.Models;
 
 namespace OopFundamentalsAndDesignPrinciples
