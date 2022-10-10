@@ -6,14 +6,6 @@ namespace OopFundamentalsAndDesignPrinciples.Services
     public class FileRepository : IFileRepository
     {
         private const string FolderPath = @"..\..\..\Files\";
-        private static readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
-        {
-            Converters = {
-                        new AbstractConverter<Book, IDocumentItem>(),
-                        new AbstractConverter<Patent, IDocumentItem>(),
-                        new AbstractConverter<LocalaziedBook, IDocumentItem>(),
-                },
-        };
 
         public Document FindById(int id)
         {
