@@ -5,7 +5,5 @@
         void Store(T item);
 
         T Retrive(string key);
-
-        void Remove(T item);
     }
 }

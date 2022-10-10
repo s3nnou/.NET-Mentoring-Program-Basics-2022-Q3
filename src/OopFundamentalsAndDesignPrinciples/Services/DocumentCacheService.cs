@@ -14,14 +14,6 @@ namespace OopFundamentalsAndDesignPrinciples.Services
                 { DocumentItemType.LocalaziedBook, DateTime.Now.AddDays(2) },
             };
 
-        public void Remove(Document item)
-        {
-            if (_cache.Contains(item.Id.ToString()))
-            {
-               _cache.Remove(item.Id.ToString());    
-            }
-        }
-
         public Document Retrive(string key)
         {
             if (_cache.Contains(key))
@@ -36,7 +28,7 @@ namespace OopFundamentalsAndDesignPrinciples.Services
 
         public void Store(Document item)
         {
-            var restrictedDocuments = new List<DocumentItemType> { DocumentItemType.Unknown };
+            var restrictedDocuments = new List<DocumentItemType> { DocumentItemType.Unknown, DocumentItemType.Magazine };
 
             if (restrictedDocuments.Contains(item.Item.DocumentType))
             {
