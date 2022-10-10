@@ -1,0 +1,16 @@
+﻿{
+  "Id": 4,
+  "Item": {
+    "$type": "OopFundamentalsAndDesignPrinciples.Models.LocalaziedBook, OopFundamentalsAndDesignPrinciples",
+    "ISBN": "978-3-16-148410-0",
+    "Title": "C# для начинающих",
+    "Authors": "J. Doe",
+    "OriginalPublisher": "West Book Works",
+    "LocalPublisher": "Научные книги",
+    "CountryOfLocalization": "Belarus",
+    "NumberOfPages": 123,
+    "PublishDate": "2022-10-09T09:21:08.9283363+03:00",
+    "DocumentType": 3
+  },
+  "FileName": "LocalaziedBook_4"
+}
