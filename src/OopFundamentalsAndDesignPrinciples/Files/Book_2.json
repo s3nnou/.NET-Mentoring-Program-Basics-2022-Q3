@@ -1,0 +1,13 @@
+{
+  "Id": 2,
+  "Item": {
+    "$type": "OopFundamentalsAndDesignPrinciples.Models.Book, OopFundamentalsAndDesignPrinciples",
+    "ISBN": "978-3-16-148410-0",
+    "Title": "C# for Dummies",
+    "Authors": "J. Doe",
+    "Publisher": "West Book Works",
+    "NumberOfPages": 123,
+    "PublishDate": "2022-10-09T09:21:08.9277321+03:00",
+    "DocumentType": 1
+  }
+}

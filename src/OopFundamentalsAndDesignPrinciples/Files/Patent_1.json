@@ -1,0 +1,12 @@
+{
+  "Id": 1,
+  "Item": {
+    "$type": "OopFundamentalsAndDesignPrinciples.Models.Patent, OopFundamentalsAndDesignPrinciples",
+    "Id": "ASB12HFAA",
+    "Title": "Cancer cure",
+    "Authors": "J. Doe",
+    "ExpirationDate": "2022-10-11T09:21:08.9273563+03:00",
+    "PublishDate": "2022-10-09T09:21:08.9274171+03:00",
+    "DocumentType": 2
+  }
+}
