@@ -57,14 +57,15 @@ namespace OopFundamentalsAndDesignPrinciples
                     {
                         return choises.Contains(choise) ? ValidationResult.Success() : ValidationResult.Error("[red]Wrong document number.[/]");
                     }));
-            try
+
+            var document = _documentService.GetDocumentById(selectedDocument);
+            if (document != null)
             {
-                var document = _documentService.GetDocumentById(selectedDocument);
                 ShowDocumentContent(document);
             }
-            catch (Exception ex)
+            else
             {
-                AnsiConsole.Write(ex.Message);
+                AnsiConsole.Write("Please try again.");
             }
 
             AnsiConsole.WriteLine("Press any button to return...");

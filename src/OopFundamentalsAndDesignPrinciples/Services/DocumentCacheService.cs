@@ -13,29 +13,17 @@ namespace OopFundamentalsAndDesignPrinciples.Services
                 { DocumentItemType.Patent, DateTime.Now.AddDays(1) },
                 { DocumentItemType.LocalaziedBook, DateTime.Now.AddDays(2) },
             };
+        private static readonly List<DocumentItemType> RestrictedDocuments = new List<DocumentItemType> { DocumentItemType.Unknown, DocumentItemType.Magazine };
 
         public Document Retrive(string key)
         {
-            if (_cache.Contains(key))
-            {
-                var retrivedItem = _cache.Get(key) as Document;
-
-                return retrivedItem;
-            }
-
-            return null;
+            var retrivedItem = _cache.Get(key) as Document;
+            return retrivedItem;
         }
 
         public void Store(Document item)
         {
-            var restrictedDocuments = new List<DocumentItemType> { DocumentItemType.Unknown, DocumentItemType.Magazine };
-
-            if (restrictedDocuments.Contains(item.Item.DocumentType))
-            {
-                return;
-            }
-
-            if (_cache.Contains(item.Id.ToString()))
+            if (RestrictedDocuments.Contains(item.Item.DocumentType) || _cache.Contains(item.Id.ToString()))
             {
                 return;
             }

@@ -1,4 +1,5 @@
 ﻿using OopFundamentalsAndDesignPrinciples.Models;
+using Spectre.Console;
 
 namespace OopFundamentalsAndDesignPrinciples.Services
 {
@@ -20,25 +21,31 @@ namespace OopFundamentalsAndDesignPrinciples.Services
 
         public Document GetDocumentById(int id)
         {
-            var cachedDocument = _cacheService.Retrive(id.ToString());
 
-            if (cachedDocument == null)
+            try
             {
-                var readDocument = _fileRepository.FindById(id);
-
-                if (readDocument == null)
+                var cachedDocument = _cacheService.Retrive(id.ToString());
+                
+                if (cachedDocument == null)
                 {
-                    throw new Exception($"There is no any documents with document id = {id}");
+                    var readDocument = _fileRepository.FindById(id);
+
+                    _cacheService.Store(readDocument);
+
+                    return readDocument;
                 }
-
-                _cacheService.Store(readDocument);
-
-                return readDocument;
+                else
+                {
+                    return cachedDocument;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return cachedDocument;
+                AnsiConsole.Write($"Error happend while loading a document id = {id} with message {ex.Message}");
+                return null;
             }
+
+
         }
     }
 }

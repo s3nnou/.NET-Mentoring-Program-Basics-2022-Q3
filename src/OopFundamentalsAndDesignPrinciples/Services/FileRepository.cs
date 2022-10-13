@@ -6,12 +6,12 @@ namespace OopFundamentalsAndDesignPrinciples.Services
     public class FileRepository : IFileRepository
     {
         private const string FolderPath = @"..\..\..\Files\";
+        private const string FileFormat = "*.json";
 
         public Document FindById(int id)
         {
-            var partialSearchName = $"_{id}";
             var hdDirectoryInWhichToSearch = new DirectoryInfo(FolderPath);
-            var filesInDir = hdDirectoryInWhichToSearch.GetFiles("*" + partialSearchName + ".json");
+            var filesInDir = hdDirectoryInWhichToSearch.GetFiles($"*_{id}.json");
             var fullName = filesInDir.First().FullName;
             var contents = File.ReadAllText(fullName);
 
@@ -25,7 +25,7 @@ namespace OopFundamentalsAndDesignPrinciples.Services
         {
             var names = new List<string>();
             var di = new DirectoryInfo(FolderPath);
-            var files = di.GetFiles("*.json");
+            var files = di.GetFiles(FileFormat);
             foreach (var file in files)
             {
                 names.Add(Path.GetFileNameWithoutExtension(file.Name));
