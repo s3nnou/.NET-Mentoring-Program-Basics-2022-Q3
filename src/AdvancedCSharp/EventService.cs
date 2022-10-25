@@ -71,11 +71,11 @@ namespace AdvancedCSharp
 
             Console.WriteLine($"AppService: found file by condtions. Found {eventArgs.FilesFoundCounter} out of {eventArgs.LimitCounter}");
 
-            if (eventArgs.FilesFoundCounter < eventArgs.LimitCounter)
+            if (eventArgs.FilesFoundCounter < eventArgs.LimitCounter - 1)
             {
                 eventArgs.FilesFoundCounter++;
             }
-            else if (eventArgs.FilesFoundCounter >= eventArgs.LimitCounter)
+            else if (eventArgs.FilesFoundCounter >= eventArgs.LimitCounter - 1)
             {
                 _textBlock.Text += $"AppService: Search will be aborted\n";
                 Console.WriteLine($"AppService: Search will be aborted");
@@ -89,11 +89,11 @@ namespace AdvancedCSharp
             _textBlock.Text += $"AppService: found file by condtions. Found {eventArgs.FilesFoundCounter} out of {eventArgs.LimitCounter} \n";
             Console.WriteLine($"AppService: found file by condtions. Found {eventArgs.FilesFoundCounter} out of {eventArgs.LimitCounter}");
 
-            if (eventArgs.FilesFoundCounter < eventArgs.LimitCounter)
+            if (eventArgs.FilesFoundCounter < eventArgs.LimitCounter - 1)
             {
                 eventArgs.FilesFoundCounter++;
             }
-            else if (eventArgs.FilesFoundCounter >= eventArgs.LimitCounter)
+            else if (eventArgs.FilesFoundCounter >= eventArgs.LimitCounter - 1)
             {
                 _textBlock.Text += $"AppService: Search will be aborted\n";
                 Console.WriteLine($"AppService: Search will be aborted");

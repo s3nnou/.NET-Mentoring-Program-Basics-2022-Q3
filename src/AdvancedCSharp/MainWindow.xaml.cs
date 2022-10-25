@@ -30,37 +30,44 @@ namespace AdvancedCSharp
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if ((bool)this.SearchByFileNameCheckbox.IsChecked && this.FileExtentionSearch.Text.Length > 0)
+            try
             {
-                Visitor = FileSystemVisitorFactory.GetFileSystemVisitor(FolderPath, this.FileExtentionSearch.Text);
-
-                var node = Visitor.GetNode();
-                Folders = new ObservableCollection<Node>() { new Node(node) };
-                Files.ItemsSource = new ObservableCollection<Node>(Folders);
-
-                if ((bool)this.TookOnly.IsChecked)
+                if ((bool)this.SearchByFileNameCheckbox.IsChecked && this.FileExtentionSearch.Text.Length > 0)
                 {
-                    var value = (int) this.CounterSlider.Value;
-                    var exlude = (bool)this.ExcludeCheckBox.IsChecked;
-                    var nodes = Visitor.FilterNode(node, false, exlude, value);
-                    SearchResult = new ObservableCollection<Node>(nodes);
+                    Visitor = FileSystemVisitorFactory.GetFileSystemVisitor(FolderPath, this.FileExtentionSearch.Text);
 
+                    var node = Visitor.GetNode();
+                    Folders = new ObservableCollection<Node>() { new Node(node) };
+                    Files.ItemsSource = new ObservableCollection<Node>(Folders);
+
+                    if ((bool)this.TookOnly.IsChecked)
+                    {
+                        var value = (int)this.CounterSlider.Value;
+                        var exlude = (bool)this.ExcludeCheckBox.IsChecked;
+                        var nodes = Visitor.FilterNode(node, false, exlude, value);
+                        SearchResult = new ObservableCollection<Node>(nodes);
+
+                        FileSearchResult.ItemsSource = SearchResult;
+
+                        return;
+                    }
+
+                    SearchResult = new ObservableCollection<Node>(Visitor.FilterNode(node, (bool)this.AbortCheckBox.IsChecked, (bool)this.ExcludeCheckBox.IsChecked, 9999));
                     FileSearchResult.ItemsSource = SearchResult;
-
-                    return;
+                }
+                else
+                {
+                    Visitor = FileSystemVisitorFactory.GetFileSystemVisitor(FolderPath);
+                    var node = Visitor.GetNode();
+                    Folders = new ObservableCollection<Node>() { node };
+                    Files.ItemsSource = new ObservableCollection<Node>(Folders);
                 }
 
-                SearchResult = new ObservableCollection<Node>(Visitor.FilterNode(node, (bool)this.AbortCheckBox.IsChecked, (bool)this.ExcludeCheckBox.IsChecked, 9999));
-                FileSearchResult.ItemsSource = SearchResult;
             }
-            else
+            catch (FileSystemVisitorException ex)
             {
-                Visitor = FileSystemVisitorFactory.GetFileSystemVisitor(FolderPath);
-                var node = Visitor.GetNode();
-                Folders = new ObservableCollection<Node>() { node };
-                Files.ItemsSource = new ObservableCollection<Node>(Folders);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
         }
 
         private void SearchByFileNameCheckbox_Checked(object sender, RoutedEventArgs e)

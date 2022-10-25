@@ -44,7 +44,7 @@ namespace AdvancedCSharp
             }
             catch (Exception ex)
             {
-                throw new Exception("error", ex);
+                throw new FileSystemVisitorException("There is an exception with this message", ex);
             }
         }
 
