@@ -155,7 +155,7 @@ namespace AdvancedCSharp.Tests
 
         [Test]
         [Apartment(ApartmentState.STA)]
-        public void FileSystemVisitor_WhenFilterIsOkayAndExcludes_ShouldShowAllFoundFiles()
+        public void FileSystemVisitor_WhenFilterIsOkayAndExcludeIsOn_ShouldShowAllFoundFiles()
         {
             // Arrange
             var app = new Application();
@@ -173,7 +173,7 @@ namespace AdvancedCSharp.Tests
 
         [Test]
         [Apartment(ApartmentState.STA)]
-        public void FileSystemVisitor_WhenFilterIsOkayAndTakesOnly2Files_ShouldShowAllFoundFiles()
+        public void FileSystemVisitor_WhenFilterIsOkayAndTakesOnlyTwoFiles_ShouldShowAllFoundFiles()
         {
             // Arrange
             var app = new Application();
@@ -191,7 +191,7 @@ namespace AdvancedCSharp.Tests
 
         [Test]
         [Apartment(ApartmentState.STA)]
-        public void FileSystemVisitor_WhenFilterIsOkayAndExludesOnly2Files_ShouldShowAllFoundFiles()
+        public void FileSystemVisitor_WhenFilterIsOkayAndExludesOnlyTwoFiles_ShouldShowAllFoundFiles()
         {
             // Arrange
             var app = new Application();
