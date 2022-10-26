@@ -2,7 +2,7 @@
 
 namespace AdvancedCSharp
 {
-    public class FoundFileEventArgs : EventArgs
+    public class FoundFileEventArgs : FileSystemVisitorBaseEventArgs
     {
         public bool AbortToggle { get; set; }
 

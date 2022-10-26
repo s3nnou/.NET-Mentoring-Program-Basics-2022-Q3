@@ -1,33 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 
 namespace AdvancedCSharp
 {
     public class FileSystemVisitor
     {
+        private const int SeachAll = 0;
+
         private readonly string _rootPath;
         private readonly Func<Node, bool>? _filteringPredicate;
-        private FoundFileEventArgs _filteredEventArgs { get; set; } = new FoundFileEventArgs();
+
+        private FoundFileEventArgs FilteredEventArgs { get; set; } = new FoundFileEventArgs();
 
         private bool IsExcludeSearch { get; set; }
         private bool IsAborted { get; set; }
 
-        public event EventHandler<FoundFileEventArgs>? StartEvent;
-        public event EventHandler? Finish;
-        public event EventHandler<FileEventArgs>? FileFound;
-        public event EventHandler<FileEventArgs>? FolderFound;
+        public event EventHandler<FoundFileEventArgs> Start;
+        public event EventHandler<FileSystemVisitorBaseEventArgs> Finish;
+        public event EventHandler<FileEventArgs> FileFound;
+        public event EventHandler<FileEventArgs> DirectoryFound;
 
-        public event EventHandler<FoundFileEventArgs>? FoundFileFound;
-        public event EventHandler<FoundFileEventArgs>? FoundFolderFound;
+        public event EventHandler<FoundFileEventArgs> FilteredFileFound;
+        public event EventHandler<FoundFileEventArgs> FilteredDirectoryFound;
+
+        private IFileSystem _fileSystem;
 
         public FileSystemVisitor(string rootPath)
         {
             _rootPath = rootPath;
+            _fileSystem = new FileSystem();
         }
 
         public FileSystemVisitor(string rootPath, Func<Node, bool> filteringPredicate) : this(rootPath)
+        {
+            _filteringPredicate = filteringPredicate;
+        }
+
+        public FileSystemVisitor(string rootPath, IFileSystem fileSystem)
+        {
+            _rootPath = rootPath;
+            _fileSystem = fileSystem;
+        }
+
+        public FileSystemVisitor(string rootPath, Func<Node, bool> filteringPredicate, IFileSystem fileSystem) : this(rootPath, fileSystem)
         {
             _filteringPredicate = filteringPredicate;
         }
@@ -36,23 +54,23 @@ namespace AdvancedCSharp
         {
             try
             {
-                OnStart(false, false);
-                var startDir = new DirectoryInfo(_rootPath);
+                OnStart(false, false, SeachAll);
+                var startDir = _fileSystem.DirectoryInfo.FromDirectoryName(_rootPath);
                 var folders = TraverseDirectory(startDir, null);
                 OnFinish();
                 return folders;
             }
             catch (Exception ex)
             {
-                throw new FileSystemVisitorException("There is an exception with this message", ex);
+                throw new FileSystemVisitorException($"There is an error: \n {ex.Message}");
             }
         }
 
-        public IEnumerable<Node> FilterNode(Node root, bool abortToggle, bool excludeTogge, int elementsToFind)
+        public IEnumerable<Node> FilterNode(Node root, bool abortToggle, bool excludeTogge, int elementsToFind = 0)
         {
             var backUpRoot = root;
-            OnStart(abortToggle, excludeTogge);
-            _filteredEventArgs.LimitCounter = elementsToFind;
+            OnStart(abortToggle, excludeTogge, elementsToFind);
+
             var foundNodesBackup = new List<Node>(Search(backUpRoot));
 
             if (IsExcludeSearch)
@@ -83,11 +101,13 @@ namespace AdvancedCSharp
                 if (_filteringPredicate(current))
                 {
                     OnFilteredElementFound(current.Data);
-                    yield return current;
+
                     if (IsAborted)
                     {
                         yield break;
                     }
+
+                    yield return current;
                 }
 
                 foreach (var node in current.Children)
@@ -95,9 +115,9 @@ namespace AdvancedCSharp
             }
         }
 
-        private Node TraverseDirectory(DirectoryInfo directoryInfo, Node parent)
+        private Node TraverseDirectory(IDirectoryInfo directoryInfo, Node parent)
         {
-            var directoryLeaf = new Leaf { Name = directoryInfo.Name, FileType = "Folder", IsFolder = true };
+            var directoryLeaf = new Item { Name = directoryInfo.Name, FileType = FileType.Folder};
             OnElementFound(directoryLeaf);
 
             var directoryNode = new Node(directoryLeaf, parent);  
@@ -110,7 +130,7 @@ namespace AdvancedCSharp
 
             foreach (var file in files)
             {
-                var leaf = new Leaf { Name = file.Name, FileType = file.Extension.ToString() };
+                var leaf = new Item { Name = file.Name, FileType = FileType.File };
                 directoryNode.Children.Add(new Node(leaf, directoryNode));
                 OnElementFound(leaf);
             }
@@ -123,10 +143,10 @@ namespace AdvancedCSharp
             IsAborted = true;
         }
 
-        protected virtual void OnStart(bool enableAbort, bool enableExclude)
+        protected virtual void OnStart(bool enableAbort, bool enableExclude, int elementsToSearch)
         {
-            var foundFileEventArgs = new FoundFileEventArgs() { AbortToggle = enableAbort, ExcludeToggle = enableExclude };
-            StartEvent?.Invoke(this, foundFileEventArgs);
+            var foundFileEventArgs = new FoundFileEventArgs() { AbortToggle = enableAbort, ExcludeToggle = enableExclude, LimitCounter = elementsToSearch };
+            Start?.Invoke(this, foundFileEventArgs);
 
             if (foundFileEventArgs.AbortSearch)
             {
@@ -138,43 +158,45 @@ namespace AdvancedCSharp
                 IsExcludeSearch = true;
             }
 
-            _filteredEventArgs = foundFileEventArgs;
+            FilteredEventArgs = foundFileEventArgs;
         }
 
         protected virtual void OnFinish()
         {
-            Finish?.Invoke(this, null);
+            Finish?.Invoke(this, new FileSystemVisitorBaseEventArgs());
             IsAborted = false;
             IsExcludeSearch = false;
         }
 
-        protected virtual void OnFilteredElementFound(Leaf item)
+        protected virtual void OnFilteredElementFound(Item item)
         {
-            if (item.IsFolder)
+            switch (item.FileType)
             {
-                FoundFolderFound?.Invoke(this, _filteredEventArgs);
+                case FileType.File:
+                    FilteredFileFound?.Invoke(this, FilteredEventArgs);
+                    break;
+                case FileType.Folder:
+                    FilteredDirectoryFound?.Invoke(this, FilteredEventArgs);
+                    break;                   
             }
-            else
-            {
-                FoundFileFound?.Invoke(this, _filteredEventArgs);
-            }
-
-            if (_filteredEventArgs.AbortSearch)
+           
+            if (FilteredEventArgs.AbortSearch)
             {
                 IsAborted = true;
             }
         }
 
-        protected virtual void OnElementFound(Leaf item) 
-        {   
-            if (item.IsFolder)
+        protected virtual void OnElementFound(Item item) 
+        {
+            switch (item.FileType)
             {
-                FolderFound?.Invoke(this, new FileEventArgs { Leaf = item });
-            }
-            else
-            {
-                FileFound?.Invoke(this, new FileEventArgs { Leaf = item });
-            }                
+                case FileType.File:
+                    FileFound?.Invoke(this, new FileEventArgs { Leaf = item });
+                    break;
+                case FileType.Folder:
+                    DirectoryFound?.Invoke(this, new FileEventArgs { Leaf = item });
+                    break;
+            }            
         }
     }
 }

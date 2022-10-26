@@ -1,9 +1,7 @@
-﻿using System;
-
-namespace AdvancedCSharp
+﻿namespace AdvancedCSharp
 {
-    public class FileEventArgs : EventArgs
+    public class FileEventArgs : FileSystemVisitorBaseEventArgs
     {
-        public Leaf? Leaf { get; set; }
+        public Item Leaf { get; set; }
     }
 }

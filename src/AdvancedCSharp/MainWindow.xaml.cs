@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 
 namespace AdvancedCSharp
@@ -10,7 +8,6 @@ namespace AdvancedCSharp
     /// </summary>
     public partial class MainWindow : Window
     {
-
         private const string FolderPath = @"..\..\..\folder\";
 
         public FileSystemVisitor Visitor { get; set; }
@@ -19,12 +16,8 @@ namespace AdvancedCSharp
 
         public ObservableCollection<Node> SearchResult { get; set; } = new ObservableCollection<Node>();
 
-        [DllImport("Kernel32")]
-        public static extern void AllocConsole();
-
         public MainWindow()
         {
-            AllocConsole();
             InitializeComponent();
         }
 
@@ -35,6 +28,12 @@ namespace AdvancedCSharp
                 if ((bool)this.SearchByFileNameCheckbox.IsChecked && this.FileExtentionSearch.Text.Length > 0)
                 {
                     Visitor = FileSystemVisitorFactory.GetFileSystemVisitor(FolderPath, this.FileExtentionSearch.Text);
+                    Visitor.Start += Visitor_StartEvent;
+                    Visitor.Finish += Visitor_Finish;
+                    Visitor.DirectoryFound += Visitor_DirectoryFound;
+                    Visitor.FilteredFileFound += Visitor_FilteredFileFound;
+                    Visitor.FileFound += Visitor_FileFound;
+                    Visitor.FilteredDirectoryFound += Visitor_FilteredDirectoryFound;
 
                     var node = Visitor.GetNode();
                     Folders = new ObservableCollection<Node>() { new Node(node) };
@@ -52,12 +51,19 @@ namespace AdvancedCSharp
                         return;
                     }
 
-                    SearchResult = new ObservableCollection<Node>(Visitor.FilterNode(node, (bool)this.AbortCheckBox.IsChecked, (bool)this.ExcludeCheckBox.IsChecked, 9999));
+                    SearchResult = new ObservableCollection<Node>(Visitor.FilterNode(node, (bool)this.AbortCheckBox.IsChecked, (bool)this.ExcludeCheckBox.IsChecked));
                     FileSearchResult.ItemsSource = SearchResult;
                 }
                 else
                 {
                     Visitor = FileSystemVisitorFactory.GetFileSystemVisitor(FolderPath);
+                    Visitor.Start += Visitor_StartEvent;
+                    Visitor.Finish += Visitor_Finish;
+                    Visitor.DirectoryFound += Visitor_DirectoryFound;
+                    Visitor.FilteredFileFound += Visitor_FilteredFileFound;
+                    Visitor.FileFound += Visitor_FileFound;
+                    Visitor.FilteredDirectoryFound += Visitor_FilteredDirectoryFound;
+
                     var node = Visitor.GetNode();
                     Folders = new ObservableCollection<Node>() { node };
                     Files.ItemsSource = new ObservableCollection<Node>(Folders);
@@ -68,6 +74,41 @@ namespace AdvancedCSharp
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void Visitor_FilteredDirectoryFound(object? sender, FoundFileEventArgs e)
+        {
+            this.LogSearch.Text += e.Message;
+        }
+
+        private void Visitor_FileFound(object? sender, FileEventArgs e)
+        {
+            this.LogSearch.Text += e.Message;
+        }
+
+        private void Visitor_FilteredFileFound(object? sender, FoundFileEventArgs e)
+        {
+            this.LogSearch.Text += e.Message;
+        }
+
+        private void Visitor_FolderFound1(object? sender, FileEventArgs e)
+        {
+            this.LogSearch.Text += e.Message;
+        }
+
+        private void Visitor_DirectoryFound(object? sender, FileEventArgs e)
+        {
+            this.LogSearch.Text += e.Message;
+        }
+
+        private void Visitor_Finish(object? sender, FileSystemVisitorBaseEventArgs e)
+        {
+            this.LogSearch.Text += e.Message;
+        }
+
+        private void Visitor_StartEvent(object? sender, FoundFileEventArgs e)
+        {
+            this.LogSearch.Text += e.Message;
         }
 
         private void SearchByFileNameCheckbox_Checked(object sender, RoutedEventArgs e)

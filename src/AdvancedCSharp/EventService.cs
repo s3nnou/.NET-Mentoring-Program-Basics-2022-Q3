@@ -1,104 +1,89 @@
-﻿using System;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Text;
 
 namespace AdvancedCSharp
 {
     public class EventService
     {
-        private TextBlock _textBlock;
-
-        public EventService()
-        {
-            var mainWindow = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
-            if (mainWindow != null)
-            {
-                _textBlock = mainWindow.LogSearch;
-            }
-            else
-            {
-                _textBlock = new TextBlock();
-            }
-        }
-
         public void OnStart(object source, FoundFileEventArgs eventArgs)
         {
-            _textBlock.Text += $"AppService: Search started \n";
-
-            Console.WriteLine($"AppService: Search started");
+            var stringBuilder = new StringBuilder($"EventService: Search started \n");
 
             if (eventArgs.AbortToggle)
             {
-                eventArgs.AbortSearch = true;
-
-                _textBlock.Text += $"AppService: Search will be aborted on 1st occurance \n";
-                Console.WriteLine($"AppService: Search will be aborted on 1st occurance");
+                eventArgs.LimitCounter = 1;
+                stringBuilder.AppendLine($"EventService: Search will be aborted on 1st occurance");
             }
 
             if (eventArgs.ExcludeToggle)
             {
                 eventArgs.Exclude = true;
-
-                _textBlock.Text += $"AppService: Filtered occurances will be removed from root\n";
-                Console.WriteLine($"AppService: Filtered occurances will be removed from root");
+                stringBuilder.AppendLine($"EventService: Filtered occurances will be removed from root");
             }
+
+            eventArgs.Message = stringBuilder.ToString();
         }
 
-        public void OnFinish(object source, EventArgs eventArgs)
+        public void OnFinish(object source, FileSystemVisitorBaseEventArgs eventArgs)
         {
-            _textBlock.Text += $"AppService: Search finished \n";
-            Console.WriteLine($"AppService: Search finished");
+            eventArgs.Message = $"EventService: Search finished \n";
         }
 
         public void OnFileFound(object source, FileEventArgs eventArgs)
         {
-            _textBlock.Text += $"AppService: found {eventArgs.Leaf.Name} file \n";
-
-            Console.WriteLine($"AppService: found {eventArgs.Leaf.Name} file");
+            eventArgs.Message = $"EventService: found {eventArgs.Leaf.Name} file \n";
         }
 
-        public void OnFolderFound(object source, FileEventArgs eventArgs)
+        public void OnDirectoryFound(object source, FileEventArgs eventArgs)
         {
-            _textBlock.Text += $"AppService: found {eventArgs.Leaf.Name} folder \n";
-
-            Console.WriteLine($"AppService: found {eventArgs.Leaf.Name} folder");
+            eventArgs.Message = $"EventService: found {eventArgs.Leaf.Name} directory \n";
         }
 
         public void OnFilteredFileFound(object source, FoundFileEventArgs eventArgs)
         {
-            _textBlock.Text += $"AppService: found file by condtions. Found {eventArgs.FilesFoundCounter} out of {eventArgs.LimitCounter} \n";
-
-            Console.WriteLine($"AppService: found file by condtions. Found {eventArgs.FilesFoundCounter} out of {eventArgs.LimitCounter}");
-
-            if (eventArgs.FilesFoundCounter < eventArgs.LimitCounter - 1)
+            if (eventArgs.LimitCounter > 0)
             {
-                eventArgs.FilesFoundCounter++;
+                var stringBuilder = new StringBuilder($"EventService: found file by condtions. Found {eventArgs.FilesFoundCounter + 1} out of {eventArgs.LimitCounter}");
+                if (eventArgs.FilesFoundCounter == eventArgs.LimitCounter)
+                {
+                    stringBuilder.AppendLine($"EventService: Search will be aborted\n");
+                    eventArgs.AbortSearch = true;
+                }
+
+                if (eventArgs.FilesFoundCounter < eventArgs.LimitCounter)
+                {
+                    eventArgs.FilesFoundCounter++;
+                }
+
+                eventArgs.Message = stringBuilder.ToString();
             }
-            else if (eventArgs.FilesFoundCounter >= eventArgs.LimitCounter - 1)
+            else
             {
-                _textBlock.Text += $"AppService: Search will be aborted\n";
-                Console.WriteLine($"AppService: Search will be aborted");
-
-                eventArgs.AbortSearch = true;
+                eventArgs.Message = $"EventService: found file by condtions";
             }
         }
 
-        public void OnFilteredFolderFound(object source, FoundFileEventArgs eventArgs)
+        public void OnFilteredDirectoryFound(object source, FoundFileEventArgs eventArgs)
         {
-            _textBlock.Text += $"AppService: found file by condtions. Found {eventArgs.FilesFoundCounter} out of {eventArgs.LimitCounter} \n";
-            Console.WriteLine($"AppService: found file by condtions. Found {eventArgs.FilesFoundCounter} out of {eventArgs.LimitCounter}");
-
-            if (eventArgs.FilesFoundCounter < eventArgs.LimitCounter - 1)
+            if(eventArgs.LimitCounter > 0)
             {
-                eventArgs.FilesFoundCounter++;
+                var stringBuilder = new StringBuilder($"EventService: found folder by condtions. Found {eventArgs.FilesFoundCounter + 1} out of {eventArgs.LimitCounter}");
+                
+                if (eventArgs.FilesFoundCounter == eventArgs.LimitCounter)
+                {
+                    stringBuilder.AppendLine($"EventService: Search will be aborted\n");
+                    eventArgs.AbortSearch = true;
+                }
+
+                if (eventArgs.FilesFoundCounter < eventArgs.LimitCounter)
+                {
+                    eventArgs.FilesFoundCounter++;
+                }
+
+                eventArgs.Message = stringBuilder.ToString();
             }
-            else if (eventArgs.FilesFoundCounter >= eventArgs.LimitCounter - 1)
+            else
             {
-                _textBlock.Text += $"AppService: Search will be aborted\n";
-                Console.WriteLine($"AppService: Search will be aborted");
-
-                eventArgs.AbortSearch = true;
+                eventArgs.Message = $"EventService: found directory by condtions";
             }
         }
     }

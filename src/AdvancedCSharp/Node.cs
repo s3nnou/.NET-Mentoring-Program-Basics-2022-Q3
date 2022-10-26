@@ -6,7 +6,7 @@ namespace AdvancedCSharp
 {
     public class Node : IEnumerable<Node>
     {
-        public Node(Leaf data, Node parent)
+        public Node(Item data, Node parent)
         {
             Data = data;
             Children = new ObservableCollection<Node>();
@@ -20,15 +20,15 @@ namespace AdvancedCSharp
             Parent = node.Parent;
         }
 
-        public Node(Leaf data)
+        public Node(Item data)
         {
             Data = data;
             Children = new ObservableCollection<Node>();
         }
 
-        public Node Parent { get; set; }
+        public Node? Parent { get; set; }
 
-        public Leaf Data { get; set; }
+        public Item Data { get; set; }
 
         public ObservableCollection<Node> Children { get; set; } = new ObservableCollection<Node>();
 
