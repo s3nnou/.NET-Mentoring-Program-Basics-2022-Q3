@@ -39,8 +39,8 @@ namespace AdvancedCSharp
         {
             var appService = new EventService();
 
-            fileSystemVisitor.Start += appService.OnStart;
-            fileSystemVisitor.Finish += appService.OnFinish;
+            fileSystemVisitor.Started += appService.OnStart;
+            fileSystemVisitor.Finished += appService.OnFinish;
             fileSystemVisitor.FileFound += appService.OnFileFound;
             fileSystemVisitor.DirectoryFound += appService.OnDirectoryFound;
             fileSystemVisitor.FilteredFileFound += appService.OnFilteredFileFound;

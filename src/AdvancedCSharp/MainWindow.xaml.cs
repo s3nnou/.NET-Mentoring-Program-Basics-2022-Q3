@@ -28,8 +28,8 @@ namespace AdvancedCSharp
                 if ((bool)this.SearchByFileNameCheckbox.IsChecked && this.FileExtentionSearch.Text.Length > 0)
                 {
                     Visitor = FileSystemVisitorFactory.GetFileSystemVisitor(FolderPath, this.FileExtentionSearch.Text);
-                    Visitor.Start += Visitor_StartEvent;
-                    Visitor.Finish += Visitor_Finish;
+                    Visitor.Started += Visitor_Started;
+                    Visitor.Finished += Visitor_Finished;
                     Visitor.DirectoryFound += Visitor_DirectoryFound;
                     Visitor.FilteredFileFound += Visitor_FilteredFileFound;
                     Visitor.FileFound += Visitor_FileFound;
@@ -57,8 +57,8 @@ namespace AdvancedCSharp
                 else
                 {
                     Visitor = FileSystemVisitorFactory.GetFileSystemVisitor(FolderPath);
-                    Visitor.Start += Visitor_StartEvent;
-                    Visitor.Finish += Visitor_Finish;
+                    Visitor.Started += Visitor_Started;
+                    Visitor.Finished += Visitor_Finished;
                     Visitor.DirectoryFound += Visitor_DirectoryFound;
                     Visitor.FilteredFileFound += Visitor_FilteredFileFound;
                     Visitor.FileFound += Visitor_FileFound;
@@ -101,12 +101,12 @@ namespace AdvancedCSharp
             this.LogSearch.Text += e.Message;
         }
 
-        private void Visitor_Finish(object? sender, FileSystemVisitorBaseEventArgs e)
+        private void Visitor_Finished(object? sender, FileSystemVisitorBaseEventArgs e)
         {
             this.LogSearch.Text += e.Message;
         }
 
-        private void Visitor_StartEvent(object? sender, FoundFileEventArgs e)
+        private void Visitor_Started(object? sender, FoundFileEventArgs e)
         {
             this.LogSearch.Text += e.Message;
         }

@@ -18,8 +18,8 @@ namespace AdvancedCSharp
         private bool IsExcludeSearch { get; set; }
         private bool IsAborted { get; set; }
 
-        public event EventHandler<FoundFileEventArgs> Start;
-        public event EventHandler<FileSystemVisitorBaseEventArgs> Finish;
+        public event EventHandler<FoundFileEventArgs> Started;
+        public event EventHandler<FileSystemVisitorBaseEventArgs> Finished;
         public event EventHandler<FileEventArgs> FileFound;
         public event EventHandler<FileEventArgs> DirectoryFound;
 
@@ -146,7 +146,7 @@ namespace AdvancedCSharp
         protected virtual void OnStart(bool enableAbort, bool enableExclude, int elementsToSearch)
         {
             var foundFileEventArgs = new FoundFileEventArgs() { AbortToggle = enableAbort, ExcludeToggle = enableExclude, LimitCounter = elementsToSearch };
-            Start?.Invoke(this, foundFileEventArgs);
+            Started?.Invoke(this, foundFileEventArgs);
 
             if (foundFileEventArgs.AbortSearch)
             {
@@ -163,7 +163,7 @@ namespace AdvancedCSharp
 
         protected virtual void OnFinish()
         {
-            Finish?.Invoke(this, new FileSystemVisitorBaseEventArgs());
+            Finished?.Invoke(this, new FileSystemVisitorBaseEventArgs());
             IsAborted = false;
             IsExcludeSearch = false;
         }
