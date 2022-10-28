@@ -74,7 +74,6 @@ namespace AdvancedCSharp.Tests
         {
             var rootNode = new Node(new Item { Name = "folder-test", FileType = FileType.Folder });
             var folderNode2 = new Node(new Item { Name = "2", FileType = FileType.Folder }, rootNode);
-
             var node1 = new Node(new Item { Name = "3.jiff", FileType = FileType.File }, rootNode);
             var node2 = new Node(new Item { Name = "9.jiff", FileType = FileType.File }, folderNode2);
 
@@ -84,7 +83,6 @@ namespace AdvancedCSharp.Tests
         private static List<Node> BuildOnlyTwoTxtNodes()
         {
             var rootNode = new Node(new Item { Name = "folder-test", FileType = FileType.Folder });
-
             var node1 = new Node(new Item { Name = "4.txt", FileType = FileType.File }, rootNode);
             var folderNode2 = new Node(new Item { Name = "2", FileType = FileType.Folder }, rootNode);
             var node2 = new Node(new Item { Name = "5.txt", FileType = FileType.File }, folderNode2);
@@ -115,44 +113,8 @@ namespace AdvancedCSharp.Tests
             return rootNode;
         }
 
-
-
-        //private static List<Node> BuildOnlyTwoTxtNodes()
-        //{
-        //    var rootNode = new Node(new Item { Name = "folder-test", IsFolder = true, FileType = "Folder" });
-
-        //    var node1 = new Node(new Item { Name = "3.jiff", IsFolder = false, FileType = ".jiff" }, rootNode);
-        //    var folderNode2 = new Node(new Item { Name = "2", IsFolder = true, FileType = "Folder" }, rootNode);
-        //    var node2 = new Node(new Item { Name = "9.jiff", IsFolder = false, FileType = ".jiff" }, folderNode2);
-
-        //    return new List<Node> { node1, node2 };
-        //}
-
-        //private static Node BuildNodeWithoutJiffNodes()
-        //{
-        //    var rootNode = new Node(new Item { Name = "folder-test", IsFolder = true, FileType = "Folder" });
-        //    var folderNode1 = new Node(new Item { Name = "1", IsFolder = true, FileType = "Folder" }, rootNode);
-        //    folderNode1.Children.Add(new Node(new Item { Name = "4.txt", IsFolder = false, FileType = ".txt" }, folderNode1));
-        //    folderNode1.Children.Add(new Node(new Item { Name = "5.txt", IsFolder = false, FileType = ".txt" }, folderNode1));
-        //    folderNode1.Children.Add(new Node(new Item { Name = "6.txt", IsFolder = false, FileType = ".txt" }, folderNode1));
-        //    var folderNode4 = new Node(new Item { Name = "4", IsFolder = true, FileType = "Folder" }, folderNode1);
-        //    folderNode1.Children.Add(folderNode4);
-        //    folderNode4.Children.Add(new Node(new Item { Name = "7.dat", IsFolder = false, FileType = ".dat" }, folderNode4));
-        //    rootNode.Children.Add(folderNode1);
-        //    var folderNode2 = new Node(new Item { Name = "2", IsFolder = true, FileType = "Folder" }, rootNode);
-        //    folderNode2.Children.Add(new Node(new Item { Name = "8.dat", IsFolder = false, FileType = ".dat" }, folderNode2));
-        //    rootNode.Children.Add(folderNode2);
-        //    var folderNode3 = new Node(new Item { Name = "3", IsFolder = true, FileType = "Folder" }, rootNode);
-        //    folderNode3.Children.Add(new Node(new Item { Name = "10.txt", IsFolder = false, FileType = ".txt" }, folderNode3));
-        //    rootNode.Children.Add(folderNode3);
-        //    rootNode.Children.Add(new Node(new Item { Name = "1.txt", IsFolder = false, FileType = ".txt" }, rootNode));
-        //    rootNode.Children.Add(new Node(new Item { Name = "2.dat", IsFolder = false, FileType = ".dat" }, rootNode));
-
-        //    return rootNode;
-        //}
-
         [Test]
-        public void GetNode_WhenEverythingIsOkay_ShouldReturnCorrectNode()
+        public void GetNode_WhenFolderExists_ShouldReturnCorrectNode()
         {
             // Arrange
             var path = "c://folder-test";
@@ -173,30 +135,30 @@ namespace AdvancedCSharp.Tests
             // Arrange
             var path = "c://folder-test";
             var fileSystemVisitor = FileSystemVisitorFactory.GetFileSystemVisitor(path, _fileSystem, ".jiff");
-            var expectedNode = BuildNode();
+            var expectedNode = BuildNodeWithOnlyJiffNodes();
 
             // Act
             var node = fileSystemVisitor.GetNode();
             var filteredNodes = fileSystemVisitor.FilterNode(node, false, false);
 
             // Assert
-            filteredNodes.Should().BeEquivalentTo(BuildNodeWithOnlyJiffNodes(), options => options.IgnoringCyclicReferences());
+            filteredNodes.Should().BeEquivalentTo(expectedNode, options => options.IgnoringCyclicReferences());
         }
 
         [Test]
-        public void FilterNode_WhenExcludeIsOffAbortIsOn_ShouldShowFoundFile()
+        public void FilterNode_WhenExcludeIsOffAbortIsOn_ShouldShowFirstFoundFile()
         {
             // Arrange
             var path = "c://folder-test";
             var fileSystemVisitor = FileSystemVisitorFactory.GetFileSystemVisitor(path, _fileSystem, ".jiff");
-            var expectedNode = BuildNode();
+            var expectedNode = BuildNodeWithOnlyJiffNodes()[1];
 
             // Act
             var node = fileSystemVisitor.GetNode();
             var filteredNodes = fileSystemVisitor.FilterNode(node, true, false);
 
             // Assert
-            filteredNodes.Should().BeEquivalentTo(new List<Node> { BuildNodeWithOnlyJiffNodes()[1] }, options => options.IgnoringCyclicReferences());
+            filteredNodes.Should().BeEquivalentTo(new List<Node> { expectedNode }, options => options.IgnoringCyclicReferences());
         }
 
         [Test]
@@ -207,14 +169,14 @@ namespace AdvancedCSharp.Tests
             var app = new Application();
             var path = "c://folder-test";
             var fileSystemVisitor = FileSystemVisitorFactory.GetFileSystemVisitor(path, _fileSystem, ".jiff");
-            var expectedNode = BuildNode();
+            var expectedNode = BuildNodeWithoutJiffNodes();
 
             // Act
             var node = fileSystemVisitor.GetNode();
             var filteredNodes = fileSystemVisitor.FilterNode(node, false, true);
 
             // Assert
-            filteredNodes.Should().BeEquivalentTo(new List<Node> { BuildNodeWithoutJiffNodes() }, options => options.IgnoringCyclicReferences());
+            filteredNodes.Should().BeEquivalentTo(new List<Node> { expectedNode }, options => options.IgnoringCyclicReferences());
         }
 
         [Test]
@@ -224,14 +186,15 @@ namespace AdvancedCSharp.Tests
             // Arrange
             var path = "c://folder-test";
             var fileSystemVisitor = FileSystemVisitorFactory.GetFileSystemVisitor(path, _fileSystem, ".txt");
-            var expectedNode = BuildNode();
+            var filesToFound = 2;
+            var expectedNode = BuildOnlyTwoTxtNodes();
 
             // Act
             var node = fileSystemVisitor.GetNode();
-            var filteredNodes = fileSystemVisitor.FilterNode(node, false, false, 2);
+            var filteredNodes = fileSystemVisitor.FilterNode(node, false, false, filesToFound);
 
             // Assert
-            filteredNodes.Should().BeEquivalentTo(BuildOnlyTwoTxtNodes(), options => options.IgnoringCyclicReferences());
+            filteredNodes.Should().BeEquivalentTo(expectedNode, options => options.IgnoringCyclicReferences());
         }
 
         [Test]
@@ -239,15 +202,16 @@ namespace AdvancedCSharp.Tests
         {
             // Arrange
             var path = "c://folder-test";
-            var fileSystemVisitor = FileSystemVisitorFactory.GetFileSystemVisitor(path, ".txt");
-            var expectedNode = BuildNode();
+            var fileSystemVisitor = FileSystemVisitorFactory.GetFileSystemVisitor(path, _fileSystem, ".txt");
+            var filesToFound = 2;
+            var expectedNode = BuildNodeWithoutTwoTxtNodes();
 
             // Act
             var node = fileSystemVisitor.GetNode();
-            var filteredNodes = fileSystemVisitor.FilterNode(node, false, true, 2);
+            var filteredNodes = fileSystemVisitor.FilterNode(node, false, true, filesToFound);
 
             // Assert
-            filteredNodes.Should().BeEquivalentTo(new List<Node> { BuildNodeWithoutTwoTxtNodes() }, options => options.IgnoringCyclicReferences());
+            filteredNodes.Should().BeEquivalentTo(new List<Node> { expectedNode }, options => options.IgnoringCyclicReferences());
         }
 
         [Test]
@@ -255,7 +219,7 @@ namespace AdvancedCSharp.Tests
         {
             // Arrange
             var path = "c://folder-test";
-            var fileSystemVisitor = FileSystemVisitorFactory.GetFileSystemVisitor(path, "Find Me Cool, Visitor");
+            var fileSystemVisitor = FileSystemVisitorFactory.GetFileSystemVisitor(path, _fileSystem, "Find Me Cool, Visitor");
 
             // Act
             var node = fileSystemVisitor.GetNode();

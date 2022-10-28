@@ -42,7 +42,7 @@ namespace AdvancedCSharp
         {
             if (eventArgs.LimitCounter > 0)
             {
-                var stringBuilder = new StringBuilder($"EventService: found file by condtions. Found {eventArgs.FilesFoundCounter + 1} out of {eventArgs.LimitCounter}");
+                var stringBuilder = new StringBuilder($"EventService: found file by condtions. Found {eventArgs.FilesFoundCounter} out of {eventArgs.LimitCounter}");
                 if (eventArgs.FilesFoundCounter == eventArgs.LimitCounter)
                 {
                     stringBuilder.AppendLine($"EventService: Search will be aborted\n");
@@ -66,7 +66,7 @@ namespace AdvancedCSharp
         {
             if(eventArgs.LimitCounter > 0)
             {
-                var stringBuilder = new StringBuilder($"EventService: found folder by condtions. Found {eventArgs.FilesFoundCounter + 1} out of {eventArgs.LimitCounter}");
+                var stringBuilder = new StringBuilder($"EventService: found folder by condtions. Found {eventArgs.FilesFoundCounter} out of {eventArgs.LimitCounter}");
                 
                 if (eventArgs.FilesFoundCounter == eventArgs.LimitCounter)
                 {
