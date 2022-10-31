@@ -15,8 +15,6 @@ namespace Task2
 
             ValidateString(stringValue);
 
-            stringValue = stringValue.Trim();
-
             if (stringValue == int.MinValue.ToString())
             {
                 return int.MinValue;
