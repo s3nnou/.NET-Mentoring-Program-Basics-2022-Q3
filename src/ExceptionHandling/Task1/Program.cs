@@ -6,16 +6,19 @@ namespace Task1
     {
         private static void Main(string[] args)
         {
-            try
-            {
-                Console.WriteLine("Type text to see it first character:");
+            Console.WriteLine("Type text to see it first character:");
 
-                var line = Console.ReadLine();
-                PrintFirstChar(line);
-            }
-            catch (ArgumentException ex)
+            while (true)
             {
-                Console.WriteLine($"Oops. Error with the following text happend: {ex.Message}");
+                try
+                {
+                    var line = Console.ReadLine();
+                    PrintFirstChar(line);
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine($"Oops. Error with the following text happend: {ex.Message}");
+                }
             }
         }
 

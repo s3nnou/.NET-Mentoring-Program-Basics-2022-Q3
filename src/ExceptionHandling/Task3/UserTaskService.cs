@@ -7,7 +7,7 @@ namespace Task3
     {
         private const int InvalidUserIdError = -1;
         private const int UserNotFoundError = -2;
-        private const int DuplicateTaskError = -2;
+        private const int DuplicateTaskError = -3;
         private readonly IUserDao _userDao;
 
         public UserTaskService(IUserDao userDao)

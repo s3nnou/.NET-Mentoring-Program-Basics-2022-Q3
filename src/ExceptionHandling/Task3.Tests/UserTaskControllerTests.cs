@@ -28,7 +28,7 @@ namespace Task3.Tests
 
             Assert.That(result, Is.EqualTo(true));
             Assert.That(model.GetActionResult(), Is.Null);
-            Assert.That(_userDao.GetUser(userId).Tasks.Count, Is.EqualTo(4));
+            Assert.That(_userDao.GetUser(userId).Tasks.Count, Is.EqualTo(5));
             StringAssert.AreEqualIgnoringCase(_userDao.GetUser(userId).Tasks[3].Description, description);
         }
 
@@ -72,6 +72,22 @@ namespace Task3.Tests
             Assert.That(result, Is.EqualTo(false));
             StringAssert.AreEqualIgnoringCase(model.GetActionResult(), "User not found");
             Assert.That(_userDao.GetUser(existingUserId).Tasks.Count, Is.EqualTo(3));
+        }
+
+        [Test]
+        public void CreateUserTask_TaskAlreadyExists_ReturnsNullAndTheTaskAlreadyExistsMessage()
+        {
+            var model = new ResponseModelStub();
+            string description = "task5";
+            int userId = 1;
+
+            bool normanResult = _controller.AddTaskForUser(userId, description, model);
+            bool duplicateResult = _controller.AddTaskForUser(userId, description, model);
+
+
+            Assert.That(normanResult, Is.EqualTo(true));
+            Assert.That(duplicateResult, Is.EqualTo(false));
+            StringAssert.AreEqualIgnoringCase(model.GetActionResult(), "The task already exists");
         }
     }
 }
