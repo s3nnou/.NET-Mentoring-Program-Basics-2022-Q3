@@ -7,7 +7,8 @@ namespace Task3.Tests.Stubs
     {
         private readonly IDictionary<int, IUser> _data = new Dictionary<int, IUser>
         {
-            { 1, new UserStab() }
+            { 1, new UserStab() },
+            { 2, new UserStab() },
         };
 
         public IUser GetUser(int id)
