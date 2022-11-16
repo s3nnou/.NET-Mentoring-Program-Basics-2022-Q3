@@ -20,7 +20,7 @@ namespace Reflection.Runner
             MyClass myClass = new MyClass(_configurationComponentBase);
 
             Console.WriteLine(myClass.Number);
-            myClass.Number = 99;
+            myClass.Number = 30;
             Console.WriteLine(myClass.Number);
 
             Console.WriteLine(myClass.Name);

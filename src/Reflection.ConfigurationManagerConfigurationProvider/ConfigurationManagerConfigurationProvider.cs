@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Reflection.Models;
 
 namespace Reflection.ConfigurationManagerConfigurationProvider
@@ -14,11 +15,14 @@ namespace Reflection.ConfigurationManagerConfigurationProvider
 
         public object LoadSettings(Type propertyType, ConfigurationItem configurationItemAttribute)
         {
-            var config = _configuration[configurationItemAttribute.SettingName];
+            var filePath = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
+            var json = File.ReadAllText(filePath);
 
-            if (!string.IsNullOrEmpty(config))
+            if (!string.IsNullOrEmpty(json))
             {
-                return config.TryConvertToPropertyType(propertyType);
+                dynamic settings = JsonConvert.DeserializeObject(json);
+                string setting = settings[configurationItemAttribute.SettingName].Value;
+                return setting.TryConvertToPropertyType(propertyType);
             }
 
             throw new ReflectionException(string.Format("Setting {0} is not specified", configurationItemAttribute.SettingName));
@@ -26,7 +30,17 @@ namespace Reflection.ConfigurationManagerConfigurationProvider
 
         public void SaveSettings(object value, ConfigurationItem configurationItemAttribute)
         {
-            _configuration[configurationItemAttribute.SettingName] = value.ToString();
-        }
+            var settingsPath = _configuration["SettingsPath"];
+
+            var filePath = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
+
+            Console.WriteLine(filePath);
+            var json = File.ReadAllText(filePath);
+            dynamic jsonObj = JsonConvert.DeserializeObject(json);
+            jsonObj[configurationItemAttribute.SettingName] = value.ToString();
+
+            var output = JsonConvert.SerializeObject(jsonObj, Newtonsoft.Json.Formatting.Indented);
+            File.WriteAllText(filePath, output);
+            File.WriteAllText(settingsPath, output);        }
     }
 }

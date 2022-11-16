@@ -1,1 +1,1 @@
-﻿Name=New8name
+Name=New name

@@ -20,7 +20,7 @@ namespace Reflection
             MyClass myClass = new MyClass(_configurationComponentBase);
 
             Console.WriteLine(myClass.Number);
-            myClass.Number = 0;
+            myClass.Number = 99;
             Console.WriteLine(myClass.Number);
 
             Console.WriteLine(myClass.Name);

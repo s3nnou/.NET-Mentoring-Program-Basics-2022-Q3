@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace Reflection
 {
@@ -8,6 +9,7 @@ namespace Reflection
 
     public class ConfigurationManagerConfigurationProvider : IConfigurationManagerConfigurationProvider
     {
+        private const string AppSettingsPath = "..\\..\\..\\appsettings.json";
         private readonly IConfiguration _configuration;
 
         public ConfigurationManagerConfigurationProvider(IConfiguration configuration)
@@ -17,11 +19,14 @@ namespace Reflection
 
         public object LoadSettings(Type propertyType, ConfigurationItem configurationItemAttribute)
         {
-            var config = _configuration[configurationItemAttribute.SettingName];
+            var filePath = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
+            var json = File.ReadAllText(filePath);
 
-            if (!string.IsNullOrEmpty(config))
+            if (!string.IsNullOrEmpty(json))
             {
-                return config.TryConvertToPropertyType(propertyType);
+                dynamic settings = JsonConvert.DeserializeObject(json);
+                string setting = settings[configurationItemAttribute.SettingName].Value;
+                return setting.TryConvertToPropertyType(propertyType);
             }
 
             throw new ReflectionException(string.Format("Setting {0} is not specified", configurationItemAttribute.SettingName));
@@ -29,7 +34,14 @@ namespace Reflection
 
         public void SaveSettings(object value, ConfigurationItem configurationItemAttribute)
         {
-            _configuration[configurationItemAttribute.SettingName] = value.ToString();
+            var filePath = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
+            var json = File.ReadAllText(filePath);
+            dynamic jsonObj = JsonConvert.DeserializeObject(json);
+            jsonObj[configurationItemAttribute.SettingName] = value.ToString();
+
+            var output = JsonConvert.SerializeObject(jsonObj, Newtonsoft.Json.Formatting.Indented);
+            File.WriteAllText(filePath, output);
+            File.WriteAllText(AppSettingsPath, output);
         }
     }
 }

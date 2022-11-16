@@ -50,6 +50,10 @@ namespace Reflection.Runner
                 {
                     Console.WriteLine($"Error happend during setting reading. See error: {ex.Message}");
                 }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine($"Unsupported property type. See error: {ex.Message}");
+                }
             }
 
             return default(U);

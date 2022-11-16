@@ -52,7 +52,7 @@ namespace Reflection
 
         private string TryGetFilePath()
         {
-            var filePath = _configuration.GetRequiredSection("Settings")["FilePath"];
+            var filePath = _configuration["FilePath"];
 
             if (string.IsNullOrEmpty(filePath))
             {
