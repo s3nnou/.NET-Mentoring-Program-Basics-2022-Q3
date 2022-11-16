@@ -17,37 +17,47 @@ namespace Reflection
 
         public object LoadSettings(Type propertyType, ConfigurationItem configurationItemAttribute)
         {
-            var path = TryGetFilePath();
-            string[] lines = File.ReadAllLines(path);
-            var dict = lines.Select(line => line.Split('=')).ToDictionary(split => split[0], split => split[1]);
-            var config = dict[configurationItemAttribute.SettingName];
-            if (!string.IsNullOrEmpty(config))
+            if (Guard.IsAvailableForStorage(propertyType))
             {
-                return config.TryConvertToPropertyType(propertyType);
+                var path = TryGetFilePath();
+                string[] lines = File.ReadAllLines(path);
+                var dict = lines.Select(line => line.Split('=')).ToDictionary(split => split[0], split => split[1]);
+                var config = dict[configurationItemAttribute.SettingName];
+                if (!string.IsNullOrEmpty(config))
+                {
+                    return config.TryConvertToPropertyType(propertyType);
+                }            
+                throw new ReflectionException(string.Format("Setting {0} is not specified", configurationItemAttribute.SettingName));
+
             }
 
-            throw new ReflectionException(string.Format("Setting {0} is not specified", configurationItemAttribute.SettingName));
+            throw new ArgumentException("Provided property is not string, int, float or TimeSpan");
         }
 
         public void SaveSettings(object value, ConfigurationItem configurationItemAttribute)
         {
-            var path = TryGetFilePath();
-            string[] lines = File.ReadAllLines(path);
-            var dict = lines.Select(line => line.Split('=')).ToDictionary(split => split[0], split => split[1]);
-
-            if (dict.ContainsKey(configurationItemAttribute.SettingName))
+            if (Guard.IsAvailableForStorage(value))
             {
-                dict[configurationItemAttribute.SettingName] = value.ToString();
+                var path = TryGetFilePath();
+                string[] lines = File.ReadAllLines(path);
+                var dict = lines.Select(line => line.Split('=')).ToDictionary(split => split[0], split => split[1]);
 
-                var newLines = new List<string>();
-
-                foreach (var pair in dict)
+                if (dict.ContainsKey(configurationItemAttribute.SettingName))
                 {
-                    newLines.Add($"{pair.Key}={pair.Value}");
-                }
+                    dict[configurationItemAttribute.SettingName] = value.ToString();
 
-                File.WriteAllLines(path, newLines);
+                    var newLines = new List<string>();
+
+                    foreach (var pair in dict)
+                    {
+                        newLines.Add($"{pair.Key}={pair.Value}");
+                    }
+
+                    File.WriteAllLines(path, newLines);
+                }
             }
+
+            throw new ArgumentException("Provided property is not string, int, float or TimeSpan");
         }
 
         private string TryGetFilePath()

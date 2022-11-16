@@ -28,7 +28,7 @@ namespace Reflection
             }
             else
             {
-                throw new ArgumentException("Provided property is not string, int, float or TimeSpan");
+                throw new ArgumentException("Unsupported setting type.");
             }
         }
     }

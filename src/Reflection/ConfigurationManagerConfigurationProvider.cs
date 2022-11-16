@@ -19,29 +19,40 @@ namespace Reflection
 
         public object LoadSettings(Type propertyType, ConfigurationItem configurationItemAttribute)
         {
-            var filePath = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
-            var json = File.ReadAllText(filePath);
-
-            if (!string.IsNullOrEmpty(json))
+            if (Guard.IsAvailableForStorage(propertyType))
             {
-                dynamic settings = JsonConvert.DeserializeObject(json);
-                string setting = settings[configurationItemAttribute.SettingName].Value;
-                return setting.TryConvertToPropertyType(propertyType);
+                var filePath = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
+                var json = File.ReadAllText(filePath);
+
+                if (!string.IsNullOrEmpty(json))
+                {
+                    dynamic settings = JsonConvert.DeserializeObject(json);
+                    string setting = settings[configurationItemAttribute.SettingName].Value;
+                    return setting.TryConvertToPropertyType(propertyType);
+                }
+
+                throw new ReflectionException(string.Format("Setting {0} is not specified", configurationItemAttribute.SettingName));
             }
 
-            throw new ReflectionException(string.Format("Setting {0} is not specified", configurationItemAttribute.SettingName));
+            throw new ArgumentException("Provided property is not string, int, float or TimeSpan");
         }
 
         public void SaveSettings(object value, ConfigurationItem configurationItemAttribute)
         {
-            var filePath = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
-            var json = File.ReadAllText(filePath);
-            dynamic jsonObj = JsonConvert.DeserializeObject(json);
-            jsonObj[configurationItemAttribute.SettingName] = value.ToString();
+            if (Guard.IsAvailableForStorage(value))
+            {
+                var filePath = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
+                var json = File.ReadAllText(filePath);
+                dynamic jsonObj = JsonConvert.DeserializeObject(json);
+                jsonObj[configurationItemAttribute.SettingName] = value.ToString();
 
-            var output = JsonConvert.SerializeObject(jsonObj, Newtonsoft.Json.Formatting.Indented);
-            File.WriteAllText(filePath, output);
-            File.WriteAllText(AppSettingsPath, output);
+                var output = JsonConvert.SerializeObject(jsonObj, Newtonsoft.Json.Formatting.Indented);
+                File.WriteAllText(filePath, output);
+                File.WriteAllText(AppSettingsPath, output);
+                return;
+            }
+
+            throw new ArgumentException("Provided property is not string, int, float or TimeSpan");
         }
     }
 }
