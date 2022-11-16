@@ -42,8 +42,8 @@ namespace Reflection.Runner
         {
             var pluginAssemblies = new List<Assembly>();
             var plugins = new List<Plugin>();
-            pluginAssemblies.Add(AssemblyLoadContext.Default.LoadFromAssemblyPath(Directory.GetCurrentDirectory() + "\\Reflection.FileConfigurationProvider.dll"));
-            pluginAssemblies.Add(AssemblyLoadContext.Default.LoadFromAssemblyPath(Directory.GetCurrentDirectory() + "\\Reflection.ConfigurationManagerConfigurationProvider.dll"));
+            pluginAssemblies.Add(AssemblyLoadContext.Default.LoadFromAssemblyPath(Directory.GetCurrentDirectory() + "\\Plugins\\Reflection.FileConfigurationProvider.dll"));
+            pluginAssemblies.Add(AssemblyLoadContext.Default.LoadFromAssemblyPath(Directory.GetCurrentDirectory() + "\\Plugins\\Reflection.ConfigurationManagerConfigurationProvider.dll"));
             
             foreach (var assembly in pluginAssemblies)
             {
