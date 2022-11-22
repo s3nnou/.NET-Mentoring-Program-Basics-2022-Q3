@@ -111,7 +111,7 @@ namespace Tasks
                     }
 
                     newNode.Prev = currentNode.Prev;
-                    newNode.Next = currentNode.Prev.Next;
+                    newNode.Next = currentNode;
                     currentNode.Prev.Next = newNode;
                     currentNode.Prev = newNode;
                 }
