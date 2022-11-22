@@ -88,9 +88,14 @@ namespace Tasks
 
                 if (index == 0)
                 {
-                    if(_head.Next == null)
+                    if (_head == null)
+                    {
+                        _head = newNode;
+                    }
+                    else if(_head.Next == null)
                     {
                         _head.Next = newNode;
+                        newNode.Prev = _head;
                     }
                     else
                     {
