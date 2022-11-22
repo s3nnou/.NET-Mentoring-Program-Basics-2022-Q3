@@ -20,7 +20,7 @@ namespace Tasks
         {
             ValidateCollectionLength();
 
-            return _list.RemoveAt(_list.Length -1);
+            return _list.RemoveAt(0);
         }
 
         public void Push(T item) => _list.AddAt(0, item);
