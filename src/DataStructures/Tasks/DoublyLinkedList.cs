@@ -50,7 +50,6 @@ namespace Tasks
     public class DoublyLinkedList<T> : IDoublyLinkedList<T>
     {
         private Node<T> _head;
-        private Node<T> _tail;
 
         public int Length { get; private set; }
 
@@ -61,13 +60,18 @@ namespace Tasks
             if(_head == null)
             {
                 _head = newNode;
-                _tail = _head;
             }
             else
             {
-                _tail.Next = newNode;
-                newNode.Prev = _tail;
-                _tail = newNode;
+                var currentNode = _head;
+
+                while (currentNode.Next != null)
+                {
+                    currentNode = currentNode.Next;
+                }
+
+                currentNode.Next = newNode;
+                newNode.Prev = currentNode;
             }
 
             Length++;
@@ -88,7 +92,6 @@ namespace Tasks
                     if (_head == null)
                     {
                         _head = newNode;
-                        _tail = _head;
                     }
                     else
                     {
@@ -99,8 +102,14 @@ namespace Tasks
                 }
                 else if (index == Length)
                 {
-                    _tail.Next = newNode;
-                    _tail = newNode;
+                    var currNode = _head;
+                    while (currNode.Next != null)
+                    {
+                        currNode = currNode.Next;
+                    }
+
+                    currNode.Next = newNode;
+                    newNode.Prev = currNode;
                 }
                 else
                 {
@@ -164,15 +173,6 @@ namespace Tasks
                 return;
             }
 
-            if (_tail.Data.Equals(item))
-            {
-                _tail.Prev.Next = null;
-                _tail = _tail.Prev;
-
-                Length--;
-                return;
-            }
-
             var currentNode = _head;
             for (var i = 0; i < Length; i++)
             {
@@ -222,20 +222,17 @@ namespace Tasks
                 return headValue;
             }
 
-            if (index == Length - 1)
-            {
-                var tailValue = _tail.Data;
-                _tail.Prev.Next = null;
-                _tail = _tail.Prev;
-                Length--;
-
-                return tailValue;
-            }
-
             var currentNode = _head;
             for (var i = 0; i < index; i++)
             {
                 currentNode = currentNode.Next;
+            }
+
+            if (index == Length - 1)
+            {
+                currentNode.Prev.Next = null;
+                Length--;
+                return currentNode.Data;
             }
 
             currentNode.Prev.Next = currentNode.Next;
