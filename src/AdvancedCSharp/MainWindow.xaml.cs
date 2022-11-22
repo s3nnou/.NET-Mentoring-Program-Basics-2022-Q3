@@ -28,7 +28,7 @@ namespace AdvancedCSharp
                 if ((bool)this.SearchByFileNameCheckbox.IsChecked && this.FileExtentionSearch.Text.Length > 0)
                 {
                     Visitor = FileSystemVisitorFactory.GetFileSystemVisitor(FolderPath, this.FileExtentionSearch.Text);
-                    Visitor.Started += Visitor_Started;
+                    Visitor.Started += (s, e) => this.LogSearch.Text += e.Message;
                     Visitor.Finished += Visitor_Finished;
                     Visitor.DirectoryFound += Visitor_DirectoryFound;
                     Visitor.FilteredFileFound += Visitor_FilteredFileFound;
