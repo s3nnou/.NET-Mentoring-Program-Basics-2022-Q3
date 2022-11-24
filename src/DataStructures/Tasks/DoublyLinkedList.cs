@@ -201,6 +201,7 @@ namespace Tasks
             var headValue = _head.Data;
             if (_head.Next == null)
             {
+                _head.Clear();
                 _head = null;
             }
             else
