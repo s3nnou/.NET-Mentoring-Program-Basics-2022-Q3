@@ -208,8 +208,7 @@ namespace Tasks
                 var temp = _head;
                 _head = _head.Next;
                 _head.Prev = null;
-                temp.Next = null;
-                temp.Prev = null;
+                temp.Clear();
             }
 
             Length--;
@@ -252,8 +251,7 @@ namespace Tasks
             var tempNode = node;
             node.Prev.Next = node.Next;
             node.Next.Prev = node.Prev;
-            tempNode.Next = null;
-            tempNode.Prev = null;
+            tempNode.Clear();
             Length--;
             return node.Data;
         }

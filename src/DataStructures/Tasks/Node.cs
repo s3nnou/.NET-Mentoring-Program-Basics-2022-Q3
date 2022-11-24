@@ -12,5 +12,11 @@
         public Node<T> Next { get; set; }
 
         public Node<T> Prev { get; set; }
+
+        public void Clear()
+        {
+            Next = null;
+            Prev = null;
+        }
     }
 }
