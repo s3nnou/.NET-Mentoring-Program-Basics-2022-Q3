@@ -6,7 +6,7 @@ using Tasks.DoNotChange;
 
 namespace Tasks
 {
-    public class DoublyLinkedListEnumerator<T> : IEnumerator<T>
+    internal sealed class DoublyLinkedListEnumerator<T> : IEnumerator<T>
     {
         private Node<T> _head;
         private Node<T> _current;
@@ -16,12 +16,27 @@ namespace Tasks
             _head = head;
         }
 
-        public T Current => _current.Data;
+        public T Current
+        {
+            get
+            {
+                try
+                {
+                    return _current.Data;
+                }
+                catch (NullReferenceException)
+                {
+                    throw new NullReferenceException();
+                }
+            }
+        }
 
-        object IEnumerator.Current => _current.Data;
+        object IEnumerator.Current => Current;
 
         public void Dispose()
         {
+            _current = null;
+            _head = null;
         }
 
         public bool MoveNext()
@@ -47,7 +62,7 @@ namespace Tasks
         }
     }
 
-    public class DoublyLinkedList<T> : IDoublyLinkedList<T>
+    public sealed class DoublyLinkedList<T> : IDoublyLinkedList<T>
     {
         private Node<T> _head;
 
@@ -55,7 +70,7 @@ namespace Tasks
 
         public void Add(T e)
         {
-            var newNode = new Node<T> { Data = e };
+            var newNode = new Node<T>(e);
 
             if(_head == null)
             {
@@ -63,15 +78,7 @@ namespace Tasks
             }
             else
             {
-                var currentNode = _head;
-
-                while (currentNode.Next != null)
-                {
-                    currentNode = currentNode.Next;
-                }
-
-                currentNode.Next = newNode;
-                newNode.Prev = currentNode;
+                AddToTail(newNode);
             }
 
             Length++;
@@ -85,7 +92,7 @@ namespace Tasks
             }
             else
             {
-                var newNode = new Node<T> { Data = e };
+                var newNode = new Node<T>(e);
 
                 if (index == 0)
                 {
@@ -102,22 +109,11 @@ namespace Tasks
                 }
                 else if (index == Length)
                 {
-                    var currNode = _head;
-                    while (currNode.Next != null)
-                    {
-                        currNode = currNode.Next;
-                    }
-
-                    currNode.Next = newNode;
-                    newNode.Prev = currNode;
+                    AddToTail(newNode);
                 }
                 else
                 {
-                    var currentNode = _head;
-                    for (var i = 0; i < index; i++)
-                    {                        
-                        currentNode = currentNode.Next;
-                    }
+                    var currentNode = GetNodeByIndex(index);
 
                     newNode.Prev = currentNode.Prev;
                     newNode.Next = currentNode;
@@ -141,13 +137,9 @@ namespace Tasks
                 return _head.Data;
             }
 
-            var currentNode = _head;
-            for (var i = 0; i < index; i++)
-            {
-                currentNode = currentNode.Next;
-            }
+            var searchedNode = GetNodeByIndex(index);
 
-            return currentNode.Data;
+            return searchedNode.Data;
         }
 
         public IEnumerator<T> GetEnumerator()
@@ -159,42 +151,26 @@ namespace Tasks
         {
             if (_head.Data.Equals(item))
             {
-                if (_head.Next == null)
-                {
-                    _head = null;
-                }
-                else
-                {
-                    _head = _head.Next;
-                    _head.Prev = null;
-                }
-
-                Length--;
+                RemoveHead();
                 return;
             }
 
             var currentNode = _head;
-            for (var i = 0; i < Length; i++)
+            while (currentNode != null)
             {
                 if (currentNode.Data.Equals(item))
                 {
                     if (currentNode.Next == null)
                     {
-                        currentNode.Prev.Next = null;
-                        Length--;
+                        RemoveTail(currentNode);
                         return;
                     }
 
-                    currentNode.Prev.Next = currentNode.Next;
-                    currentNode.Next.Prev = currentNode.Prev;
-                    Length--;
+                    RemoveNode(currentNode);
                     return;
                 }
 
-                if (currentNode.Next != null)
-                {
-                    currentNode = currentNode.Next;
-                }         
+                currentNode = currentNode.Next;
             }
         }
 
@@ -207,39 +183,79 @@ namespace Tasks
 
             if (index == 0)
             {
-                var headValue = _head.Data;
-                if (_head.Next == null)
-                {
-                    _head = null;
-                }
-                else
-                {
-                    _head = _head.Next;
-                    _head.Prev = null;
-                }
-
-                Length--;
-                return headValue;
+                return RemoveHead();
             }
 
+            var currentNode = GetNodeByIndex(index);
+
+            if (index == Length - 1)
+            {
+                return RemoveTail(currentNode);
+            }
+
+            return RemoveNode(currentNode);
+        }
+
+        private T RemoveHead()
+        {
+            var headValue = _head.Data;
+            if (_head.Next == null)
+            {
+                _head = null;
+            }
+            else
+            {
+                var temp = _head;
+                _head = _head.Next;
+                _head.Prev = null;
+                temp.Next = null;
+                temp.Prev = null;
+            }
+
+            Length--;
+            return headValue;
+        }
+
+        private T RemoveTail(Node<T> node)
+        {
+            node.Prev.Next = null;
+            Length--;
+            return node.Data;
+        }
+
+        private void AddToTail(Node<T> newNode)
+        {
+            var currentNode = _head;
+
+            while (currentNode.Next != null)
+            {
+                currentNode = currentNode.Next;
+            }
+
+            currentNode.Next = newNode;
+            newNode.Prev = currentNode;
+        }
+
+        private Node<T> GetNodeByIndex(int index)
+        {
             var currentNode = _head;
             for (var i = 0; i < index; i++)
             {
                 currentNode = currentNode.Next;
             }
 
-            if (index == Length - 1)
-            {
-                currentNode.Prev.Next = null;
-                Length--;
-                return currentNode.Data;
-            }
+            return currentNode;
+        }
 
-            currentNode.Prev.Next = currentNode.Next;
-            currentNode.Next.Prev = currentNode.Prev;
+        private T RemoveNode(Node<T> node)
+        {
+            var tempNode = node;
+            node.Prev.Next = node.Next;
+            node.Next.Prev = node.Prev;
+            tempNode.Next = null;
+            tempNode.Prev = null;
             Length--;
-
-            return currentNode.Data;
+            return node.Data;
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

@@ -3,7 +3,7 @@ using Tasks.DoNotChange;
 
 namespace Tasks
 {
-    public class HybridFlowProcessor<T> : IHybridFlowProcessor<T>
+    public sealed class HybridFlowProcessor<T> : IHybridFlowProcessor<T>
     {
         private IDoublyLinkedList<T> _list = new DoublyLinkedList<T>();
 
