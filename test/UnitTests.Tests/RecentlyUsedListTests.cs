@@ -112,5 +112,40 @@ namespace UnitTests.Tests
             // Assert
             list.Size.Should().Be(expectedLimit);
         }
+
+        [Test]
+        public void RecentlyUsedList_WhenSizeNumberUsed_ShouldUseProvidedSize()
+        {
+            // Arrange
+            var size = 6;
+            var expectedSize = 6;
+
+            // Act
+            var list = new RecentlyUsedList(size);
+
+            // Assert
+            list.Size.Should().Be(expectedSize);
+        }
+
+        [Test]
+        public void Add_WhenCountIsBiggerThenSizw_ShouldRemoveNewItems()
+        {
+            // Arrange
+            var list = new RecentlyUsedList(3);
+            var expectedList = new RecentlyUsedList(3);
+            expectedList.Add("1");
+            expectedList.Add("2");
+            expectedList.Add("3");
+
+            // Act
+            list.Add("1");
+            list.Add("2");
+            list.Add("3");
+            list.Add("4");
+            list.Add("5");
+
+            // Assert
+            list.Should().BeEquivalentTo(expectedList);
+        }
     }
 }
