@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
 
 namespace UnitTesting
 {
@@ -16,7 +11,54 @@ namespace UnitTesting
     {
         public int Sum(string num1, string num2)
         {
-            throw new NotImplementedException();
+            var parsedNum1 = Parse(num1);
+            var parsedNum2 = Parse(num2);
+
+            return parsedNum1 + parsedNum2;
+        }
+
+        private int Parse(string stringValue)
+        {
+            if (string.IsNullOrEmpty(stringValue))
+            {
+                throw new ArgumentNullException();
+            }
+
+            stringValue = stringValue.Trim();
+
+            if (!IsNaturalNumber(stringValue))
+            {
+                return 0;
+            }
+
+            if (stringValue == int.MinValue.ToString())
+            {
+                return int.MinValue;
+            }
+
+            if (stringValue == int.MaxValue.ToString())
+            {
+                return int.MaxValue;
+            }
+
+            var y = 0;
+
+            checked
+            {
+                for (int i = 0; i < stringValue.Length; i++)
+                {
+                    y = y * 10 + (stringValue[i] - '0');
+                }
+
+            }
+
+            return y;
+        }
+
+        private bool IsNaturalNumber(string stringValue)
+        {
+            var regex = new Regex("^[1-9][0-9]*$");
+            return regex.IsMatch(stringValue);
         }
     }
 }
