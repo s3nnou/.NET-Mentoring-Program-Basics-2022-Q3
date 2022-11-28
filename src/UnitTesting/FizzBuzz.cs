@@ -33,22 +33,20 @@ namespace UnitTesting
 
         private static string DetermineFizzOrBuzz(int number)
         {
-            if (IsDivededByThree(number) && IsDivededByFive(number))
+            var fizzBuzzBuilder = new StringBuilder();
+
+            if (IsDivededByThree(number))
             {
-                return "FizzBuzz";
+                fizzBuzzBuilder.Append("Fizz");
             }
-            else if (IsDivededByFive(number))
+
+            if (IsDivededByFive(number))
             {
-                return "Buzz";
+                fizzBuzzBuilder.Append("Buzz");
             }
-            else if (IsDivededByThree(number))
-            {
-                return "Fizz";
-            }
-            else
-            {
-                return number.ToString();
-            }
+
+            var fizzBuzzString = fizzBuzzBuilder.ToString();
+            return string.IsNullOrEmpty(fizzBuzzString) ? number.ToString() : fizzBuzzString;
         }
 
         private static bool IsDivededByThree(int number) => number % 3 == 0;
