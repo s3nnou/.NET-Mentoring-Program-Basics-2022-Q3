@@ -27,6 +27,13 @@ namespace UnitTests.Tests
         [TestCase("4", "-88888888", 4)]
         [TestCase("-54325325", "435.43254", 0)]
         [TestCase("-1", "-1", 0)]
+        [TestCase("", "2", 2)]
+        [TestCase("4", "", 4)]
+        [TestCase(null, "7", 7)]
+        [TestCase("6", null, 6)]
+        [TestCase(null, "", 0)]
+        [TestCase("", null, 0)]
+        [TestCase(null, null, 0)]
         public void Sum_WhenNumbersIsNotNatural_ShouldReturnResult(string num1, string num2, int expectedResult)
         {
             // Arrange
@@ -37,26 +44,6 @@ namespace UnitTests.Tests
 
             // Assert
             result.Should().Be(expectedResult);
-        }
-
-        [Test]
-        [TestCase("", "2")]
-        [TestCase("4", "")]
-        [TestCase(null, "7")]
-        [TestCase("6", null)]
-        [TestCase(null, "")]
-        [TestCase("", null)]
-        [TestCase(null, null)]
-        public void Sum_WhenNumbersStringsIsNullOrEmpty_ShoulThrowException(string num1, string num2)
-        {
-            // Arrange
-            var sum = new KataSum();
-
-            // Act 
-            var action = () => sum.Sum(num1, num2);
-
-            // Assert
-            action.Should().Throw<ArgumentException>();
         }
     }
 }

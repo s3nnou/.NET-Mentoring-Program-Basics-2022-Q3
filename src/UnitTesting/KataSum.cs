@@ -21,7 +21,7 @@ namespace UnitTesting
         {
             if (string.IsNullOrEmpty(stringValue))
             {
-                throw new ArgumentNullException();
+                return 0;
             }
 
             stringValue = stringValue.Trim();
@@ -29,11 +29,6 @@ namespace UnitTesting
             if (!IsNaturalNumber(stringValue))
             {
                 return 0;
-            }
-
-            if (stringValue == int.MinValue.ToString())
-            {
-                return int.MinValue;
             }
 
             if (stringValue == int.MaxValue.ToString())
