@@ -4,12 +4,18 @@ namespace UnitTesting
 {
     public interface IRecentlyUsedList : IEnumerable<string>
     {
+        int Count { get;}
+
+        int Size { get;}
+
+        string this[int index] { get; }
+
         void Add(string item);
     }
 
     public class RecentlyUsedList : IRecentlyUsedList
     {        
-        private const int DefaultSize = 5;
+        private const int DefaultLimitSize = 5;
 
         private List<string> _items;
 
@@ -17,25 +23,24 @@ namespace UnitTesting
         {
             _items = new List<string>();
             Count = 0;
-            Size = DefaultSize;
         }
 
-        public RecentlyUsedList(int limit)
+        public RecentlyUsedList(int limit = 0)
         {
             _items = new List<string>();
             Count = 0;
-            Size = limit;
+            Size = limit == 0 ? DefaultLimitSize : limit;
         }
 
         public int Count { get; private set; }
 
-        public int Size { get; private set; }
+        public int Size { get; private set; } = -1;
 
         public string this[int index]
         {
             get
             {
-                if (index >= Size || index < 0)
+                if (index >= Count || index < 0)
                     throw new IndexOutOfRangeException();
 
                 return _items.ElementAt(index);
@@ -44,7 +49,7 @@ namespace UnitTesting
 
         public void Add(string item)
         {
-            if(Count >= Size)
+            if(Size != -1 && Count >= Size)
             {
                 return;
             }
@@ -59,7 +64,6 @@ namespace UnitTesting
 
         private void RemoveDuplicate(string item)
         {
-
             var index = _items.IndexOf(item);
             if (index != -1)
             {
@@ -71,6 +75,5 @@ namespace UnitTesting
         public IEnumerator<string> GetEnumerator() => _items.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
     }
 }
