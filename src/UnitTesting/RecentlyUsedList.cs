@@ -8,7 +8,8 @@ namespace UnitTesting
 
         int Size { get;}
 
-        public string this[int index] { get; }
+        string this[int index] { get; }
+
         void Add(string item);
     }
 

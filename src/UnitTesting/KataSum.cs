@@ -4,9 +4,9 @@ namespace UnitTesting
 {
     public interface IKataSum
     {
-        public int Sum(string num1, string num2);
-
+        int Sum(string num1, string num2);
     }
+
     public class KataSum : IKataSum
     {
         public int Sum(string num1, string num2)
