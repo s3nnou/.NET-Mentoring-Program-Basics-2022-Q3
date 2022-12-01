@@ -11,11 +11,13 @@ namespace UnitTesting
 
     public class FizzBuzz : IFizzBuzz
     {
+        private const int Count = 100;
+
         public string PrintAll()
         {
             var stringBuilder = new StringBuilder();
 
-            for (var i = 1; i <= 100; i++)
+            for (var i = 1; i <= Count; i++)
             {
                 stringBuilder.AppendLine(PrintNumber(i));
             }
@@ -25,7 +27,7 @@ namespace UnitTesting
 
         public string PrintNumber(int number)
         {
-            if (number <= 0 || number > 100)
+            if (number <= 0 || number > Count)
                 throw new ArgumentException();
 
             return DetermineFizzOrBuzz(number);
@@ -45,8 +47,7 @@ namespace UnitTesting
                 fizzBuzzBuilder.Append("Buzz");
             }
 
-            var fizzBuzzString = fizzBuzzBuilder.ToString();
-            return string.IsNullOrEmpty(fizzBuzzString) ? number.ToString() : fizzBuzzString;
+            return fizzBuzzBuilder.Length == 0 ? number.ToString() : fizzBuzzBuilder.ToString();
         }
 
         private static bool IsDivededByThree(int number) => number % 3 == 0;

@@ -55,40 +55,56 @@ namespace UnitTests.Tests
         {
             // Arrange
             var list = new RecentlyUsedList();
-            var item = "hello";
-            var expectedItem = "hello";
-            var expectedSize = 1;
+            var item1 = "hello";
+            var item2 = "evening";
+            var item3 = "morning";
+            var expectedSize = 3;
+            var expectedList = new RecentlyUsedList(3);
+            expectedList.Add("hello");
+            expectedList.Add("evening");
+            expectedList.Add("morning");
 
             // Act
-            list.Add(item);
+            list.Add(item1);
+            list.Add(item2);
+            list.Add(item3);
 
             // Assert
-            list[0].Should().BeEquivalentTo(expectedItem);
+            list.Should().BeEquivalentTo(expectedList);
             list.Count.Should().Be(expectedSize);
         }
 
         [Test]
-        public void Add_WhenDuplicatesExistsInList_ShouldThrowExceptionAndAbortAdding()
+        public void Add_WhenDuplicatesExistsInList_ShouldRemoveDuplicateAndInsertItOnTop()
         {
             // Arrange
             var list = new RecentlyUsedList();
-            var firstItem = "hello";
-            var secondItem = "hello";
-            var expectedItem = "hello";
+            var item1 = "hello";
+            var item2 = "evening";
+            var item3 = "morning";
+            var duplicateItem = "hello";
+            var expectedSize = 3;
+            var expectedList = new RecentlyUsedList(3);
+            expectedList.Add("evening");
+            expectedList.Add("morning");
+            expectedList.Add("hello");
 
-            // Act & Assert
-            list.Add(firstItem);
-            list[0].Should().BeEquivalentTo(expectedItem);
-            list.Count.Should().Be(1);
-            list.Add(secondItem);
-            list.Count.Should().Be(1);
+            // Act
+            list.Add(item1);
+            list.Add(item2);
+            list.Add(item3);
+            list.Add(duplicateItem);
+
+            // Assert
+            list.Should().BeEquivalentTo(expectedList);
+            list.Count.Should().Be(expectedSize);
         }
 
         [Test]
         [TestCase("")]
         [TestCase(null)]
 
-        public void Add_WhenDuplicatesExistsInList_ShouldThrowExceptionAndAbortAdding(string stringToAdd)
+        public void Add_WhenStringIsNullOrEmpty_ShouldThrowExceptionAndAbortAdding(string stringToAdd)
         {
             // Arrange
             var list = new RecentlyUsedList();
@@ -107,7 +123,7 @@ namespace UnitTests.Tests
             var expectedLimit = 5;
 
             // Act
-            var list = new RecentlyUsedList();
+            var list = new RecentlyUsedList(0);
 
             // Assert
             list.Size.Should().Be(expectedLimit);
@@ -128,7 +144,7 @@ namespace UnitTests.Tests
         }
 
         [Test]
-        public void Add_WhenCountIsBiggerThenSizw_ShouldRemoveNewItems()
+        public void Add_WhenCountIsBiggerThenSize_ShouldRemoveNewItems()
         {
             // Arrange
             var list = new RecentlyUsedList(3);
