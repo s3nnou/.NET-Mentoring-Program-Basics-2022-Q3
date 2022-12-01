@@ -24,7 +24,7 @@ namespace UnitTesting
             Count = 0;
         }
 
-        public RecentlyUsedList(int limit)
+        public RecentlyUsedList(int limit = 0)
         {
             _items = new List<string>();
             Count = 0;
