@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "NetFundamentals.Console": {
+      "commandName": "Project",
+      "commandLineArgs": "Uladlen"
+    }
+  }
+}
