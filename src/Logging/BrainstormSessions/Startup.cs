@@ -3,12 +3,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using BrainstormSessions.Core.Interfaces;
 using BrainstormSessions.Core.Model;
+using BrainstormSessions.Filters;
 using BrainstormSessions.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace BrainstormSessions
 {
@@ -19,7 +22,9 @@ namespace BrainstormSessions
             services.AddDbContext<AppDbContext>(
                 optionsBuilder => optionsBuilder.UseInMemoryDatabase("InMemoryDb"));
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(opts => {
+                opts.Filters.Add<LogActionAttribute>();
+            });
 
             services.AddScoped<IBrainstormSessionRepository,
                 EFStormSessionRepository>();
@@ -27,8 +32,10 @@ namespace BrainstormSessions
 
         public void Configure(IApplicationBuilder app,
             IWebHostEnvironment env,
-            IServiceProvider serviceProvider)
+            IServiceProvider serviceProvider,
+            ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddLog4Net();
             if (env.IsDevelopment())
             {
                 var repository = serviceProvider.GetRequiredService<IBrainstormSessionRepository>();
@@ -39,7 +46,7 @@ namespace BrainstormSessions
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

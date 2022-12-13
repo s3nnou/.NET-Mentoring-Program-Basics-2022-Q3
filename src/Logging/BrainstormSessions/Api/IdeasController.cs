@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BrainstormSessions.ClientModels;
 using BrainstormSessions.Core.Interfaces;
 using BrainstormSessions.Core.Model;
+using log4net;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BrainstormSessions.Api
@@ -12,6 +13,7 @@ namespace BrainstormSessions.Api
     public class IdeasController : ControllerBase
     {
         private readonly IBrainstormSessionRepository _sessionRepository;
+        private readonly ILog _log = LogManager.GetLogger(typeof(IdeasController));
 
         public IdeasController(IBrainstormSessionRepository sessionRepository)
         {
@@ -25,6 +27,7 @@ namespace BrainstormSessions.Api
             var session = await _sessionRepository.GetByIdAsync(sessionId);
             if (session == null)
             {
+                _log.Error($"There is no ideas for session with id = {sessionId}");
                 return NotFound(sessionId);
             }
 
@@ -36,6 +39,9 @@ namespace BrainstormSessions.Api
                 DateCreated = idea.DateCreated
             }).ToList();
 
+            _log.DebugFormat("Succesfully retrived ideas {result} for session with id = {sessionId}", result, sessionId);
+            _log.Info($"Succesfully retrived ideas for session with id = {sessionId}");
+
             return Ok(result);
         }
 
@@ -44,14 +50,18 @@ namespace BrainstormSessions.Api
         {
             if (!ModelState.IsValid)
             {
+                _log.Error($"Idea model is not valid.");
                 return BadRequest(ModelState);
             }
 
             var session = await _sessionRepository.GetByIdAsync(model.SessionId);
             if (session == null)
             {
+                _log.Error($"There is no session with id = {model.SessionId}");
                 return NotFound(model.SessionId);
             }
+
+            _log.Info($"Succesfully retrived session with id = {model.SessionId}");
 
             var idea = new Idea()
             {
@@ -59,9 +69,13 @@ namespace BrainstormSessions.Api
                 Description = model.Description,
                 Name = model.Name
             };
+
             session.AddIdea(idea);
+            _log.DebugFormat("Succesfully created idea {idea} for session with id = {model.SessionId}", idea, model.SessionId);
 
             await _sessionRepository.UpdateAsync(session);
+
+            _log.Info($"Succesfully added idea to the session with id = {model.SessionId}");
 
             return Ok(session);
         }
@@ -77,6 +91,7 @@ namespace BrainstormSessions.Api
 
             if (session == null)
             {
+                _log.Error($"There is no session with id = {sessionId}");
                 return NotFound(sessionId);
             }
 
@@ -87,6 +102,9 @@ namespace BrainstormSessions.Api
                 Description = idea.Description,
                 DateCreated = idea.DateCreated
             }).ToList();
+
+            _log.DebugFormat("Succesfully retrived ideas {result} for session with id = {sessionId}", result, session);
+            _log.Info($"Succesfully retrived ideas for session with id = {sessionId}");
 
             return result;
         }
@@ -101,6 +119,7 @@ namespace BrainstormSessions.Api
         {
             if (!ModelState.IsValid)
             {
+                _log.Error($"Idea model is not valid.");
                 return BadRequest(ModelState);
             }
 
@@ -108,8 +127,11 @@ namespace BrainstormSessions.Api
 
             if (session == null)
             {
+                _log.Error($"There is no session with id = {model.SessionId}");
                 return NotFound(model.SessionId);
             }
+
+            _log.Info($"Succesfully retrived session with id = {model.SessionId}");
 
             var idea = new Idea()
             {
@@ -119,7 +141,10 @@ namespace BrainstormSessions.Api
             };
             session.AddIdea(idea);
 
+            _log.DebugFormat("Succesfully created idea {idea} for session with id = {model.SessionId}", idea, model.SessionId);
+
             await _sessionRepository.UpdateAsync(session);
+            _log.Info($"Succesfully added idea to the session with id = {model.SessionId}");
 
             return CreatedAtAction(nameof(CreateActionResult), new { id = session.Id }, session);
         }
