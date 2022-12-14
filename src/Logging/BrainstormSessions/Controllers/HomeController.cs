@@ -7,7 +7,6 @@ using BrainstormSessions.Core.Model;
 using BrainstormSessions.ViewModels;
 using log4net;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace BrainstormSessions.Controllers
 {
@@ -49,8 +48,7 @@ namespace BrainstormSessions.Controllers
         {
             if (!ModelState.IsValid)
             {
-                _log.Warn("Passed new session model is not valid");
-
+                _log.Error("Passed new session model is not valid");
                 return BadRequest(ModelState);
 
             }
@@ -62,7 +60,7 @@ namespace BrainstormSessions.Controllers
                     Name = model.SessionName
                 };
 
-                _log.DebugFormat("Adding new session {newSession}", newSession);
+                _log.Debug($"Adding new session {newSession}");
 
                 await _sessionRepository.AddAsync(newSession);
             }

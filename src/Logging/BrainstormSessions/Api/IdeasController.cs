@@ -27,7 +27,7 @@ namespace BrainstormSessions.Api
             var session = await _sessionRepository.GetByIdAsync(sessionId);
             if (session == null)
             {
-                _log.Error($"There is no ideas for session with id = {sessionId}");
+                _log.Warn($"There is no ideas for session with id = {sessionId}");
                 return NotFound(sessionId);
             }
 
@@ -39,7 +39,7 @@ namespace BrainstormSessions.Api
                 DateCreated = idea.DateCreated
             }).ToList();
 
-            _log.DebugFormat("Succesfully retrived ideas {result} for session with id = {sessionId}", result, sessionId);
+            _log.Debug($"Succesfully retrived ideas {result} for session with id = {sessionId}");
             _log.Info($"Succesfully retrived ideas for session with id = {sessionId}");
 
             return Ok(result);
@@ -57,7 +57,7 @@ namespace BrainstormSessions.Api
             var session = await _sessionRepository.GetByIdAsync(model.SessionId);
             if (session == null)
             {
-                _log.Error($"There is no session with id = {model.SessionId}");
+                _log.Warn($"There is no session with id = {model.SessionId}");
                 return NotFound(model.SessionId);
             }
 
@@ -71,7 +71,7 @@ namespace BrainstormSessions.Api
             };
 
             session.AddIdea(idea);
-            _log.DebugFormat("Succesfully created idea {idea} for session with id = {model.SessionId}", idea, model.SessionId);
+            _log.Debug($"Succesfully created idea {idea} for session with id = {model.SessionId}");
 
             await _sessionRepository.UpdateAsync(session);
 
@@ -103,7 +103,7 @@ namespace BrainstormSessions.Api
                 DateCreated = idea.DateCreated
             }).ToList();
 
-            _log.DebugFormat("Succesfully retrived ideas {result} for session with id = {sessionId}", result, session);
+            _log.Debug($"Succesfully retrived ideas {result} for session with id = {sessionId}");
             _log.Info($"Succesfully retrived ideas for session with id = {sessionId}");
 
             return result;
@@ -141,7 +141,7 @@ namespace BrainstormSessions.Api
             };
             session.AddIdea(idea);
 
-            _log.DebugFormat("Succesfully created idea {idea} for session with id = {model.SessionId}", idea, model.SessionId);
+            _log.Debug($"Succesfully created idea {idea} for session with id = {model.SessionId}");
 
             await _sessionRepository.UpdateAsync(session);
             _log.Info($"Succesfully added idea to the session with id = {model.SessionId}");

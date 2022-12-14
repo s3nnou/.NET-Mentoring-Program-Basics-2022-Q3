@@ -30,10 +30,9 @@ namespace BrainstormSessions.Controllers
             var session = await _sessionRepository.GetByIdAsync(id.Value);
             _log.Debug($"Succefully retrived session = {session}");
 
-
             if (session == null)
             {
-                _log.Error($"There is no session id = {id}");
+                _log.Warn($"There is no session id = {id}");
                 return Content("Session not found.");
             }
 
