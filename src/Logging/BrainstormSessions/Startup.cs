@@ -23,7 +23,7 @@ namespace BrainstormSessions
                 optionsBuilder => optionsBuilder.UseInMemoryDatabase("InMemoryDb"));
 
             services.AddControllersWithViews(opts => {
-                opts.Filters.Add<LogActionAttribute>();
+                opts.Filters.Add<LogActionFilter>();
             });
 
             services.AddScoped<IBrainstormSessionRepository,
