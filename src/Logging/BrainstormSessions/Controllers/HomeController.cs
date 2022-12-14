@@ -5,12 +5,14 @@ using System.Threading.Tasks;
 using BrainstormSessions.Core.Interfaces;
 using BrainstormSessions.Core.Model;
 using BrainstormSessions.ViewModels;
+using log4net;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BrainstormSessions.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly ILog _log = LogManager.GetLogger(typeof(HomeController));
         private readonly IBrainstormSessionRepository _sessionRepository;
 
         public HomeController(IBrainstormSessionRepository sessionRepository)
@@ -30,6 +32,8 @@ namespace BrainstormSessions.Controllers
                 IdeaCount = session.Ideas.Count
             });
 
+            _log.Info("Succefully got sessions list.");
+
             return View(model);
         }
 
@@ -44,16 +48,24 @@ namespace BrainstormSessions.Controllers
         {
             if (!ModelState.IsValid)
             {
+                _log.Warn("Passed new session model is not valid");
                 return BadRequest(ModelState);
+
             }
             else
             {
-                await _sessionRepository.AddAsync(new BrainstormSession()
+                var newSession = new BrainstormSession()
                 {
                     DateCreated = DateTimeOffset.Now,
                     Name = model.SessionName
-                });
+                };
+
+                _log.Debug($"Adding new session {newSession}");
+
+                await _sessionRepository.AddAsync(newSession);
             }
+
+            _log.Info("Succefully added new session.");
 
             return RedirectToAction(actionName: nameof(Index));
         }
