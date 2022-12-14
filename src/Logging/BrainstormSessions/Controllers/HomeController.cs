@@ -48,7 +48,7 @@ namespace BrainstormSessions.Controllers
         {
             if (!ModelState.IsValid)
             {
-                _log.Error("Passed new session model is not valid");
+                _log.Warn("Passed new session model is not valid");
                 return BadRequest(ModelState);
 
             }
