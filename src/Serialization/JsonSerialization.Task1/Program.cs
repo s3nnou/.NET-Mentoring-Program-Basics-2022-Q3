@@ -26,7 +26,7 @@ namespace JsonSerialization.Task1
             {
                 var deserilizeDepartment = JsonSerializer.Deserialize<Department>(fs);
 
-                if (deserilizeDepartment is null)
+                if (deserilizeDepartment is null || deserilizeDepartment.DepartmentName is null)
                 {
                     Console.WriteLine("Deserialized object is null. Please check department.json file.");
                     return;

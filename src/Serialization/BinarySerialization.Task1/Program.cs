@@ -29,7 +29,7 @@ namespace BinarySerialization.Task1
             {
                 var deserilizeDepartment = formatter.Deserialize(fs) as Department;
 
-                if(deserilizeDepartment is null)
+                if (deserilizeDepartment is null || deserilizeDepartment.DepartmentName is null)
                 {
                     Console.WriteLine("Deserialized object is null. Please check department.dat file.");
                     return;
