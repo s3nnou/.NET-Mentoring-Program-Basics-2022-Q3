@@ -29,6 +29,12 @@ namespace BinarySerialization.Task1
             {
                 var deserilizeDepartment = formatter.Deserialize(fs) as Department;
 
+                if(deserilizeDepartment is null)
+                {
+                    Console.WriteLine("Deserialized object is null. Please check department.dat file.");
+                    return;
+                }
+
                 foreach (var employee in deserilizeDepartment.Employees)
                 {
                     Console.WriteLine($"Employee {employee.EmpoyeeName} is part of the {deserilizeDepartment.DepartmentName}");

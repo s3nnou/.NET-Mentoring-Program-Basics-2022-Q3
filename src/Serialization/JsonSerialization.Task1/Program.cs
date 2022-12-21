@@ -1,6 +1,4 @@
 ﻿using Shared;
-using System;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.Json;
 
 namespace JsonSerialization.Task1
@@ -27,6 +25,13 @@ namespace JsonSerialization.Task1
             using (FileStream fs = new FileStream("department.json", FileMode.OpenOrCreate))
             {
                 var deserilizeDepartment = JsonSerializer.Deserialize<Department>(fs);
+
+                if (deserilizeDepartment is null)
+                {
+                    Console.WriteLine("Deserialized object is null. Please check department.json file.");
+                    return;
+                }
+
                 foreach (var employee in deserilizeDepartment.Employees)
                 {
                     Console.WriteLine($"Employee {employee.EmpoyeeName} is part of the {deserilizeDepartment.DepartmentName}");

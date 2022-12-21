@@ -1,5 +1,4 @@
-﻿
-using System.Runtime.Serialization.Formatters.Binary;
+﻿using System.Runtime.Serialization.Formatters.Binary;
 
 namespace BinarySerialization.Task2
 {
@@ -30,6 +29,13 @@ namespace BinarySerialization.Task2
             using (FileStream fs = new FileStream("cat.dat", FileMode.OpenOrCreate))
             {
                 var deserilizedCat = formatter.Deserialize(fs) as Cat;
+
+                if (deserilizedCat is null)
+                {
+                    Console.WriteLine("Deserialized object is null. Please check cat.dat file.");
+                    return;
+                }
+
                 Console.WriteLine($"Cat named {deserilizedCat.Name} with age {deserilizedCat.Age} says meow");
             }
         }
