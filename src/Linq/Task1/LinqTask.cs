@@ -55,9 +55,6 @@ namespace Task1
         {
             const string nubmersPattern = "^[0-9]+$";
             const string bracesPattern = "^\\(.*?\\)";
-
-            var a = customers.Where(i => !Regex.IsMatch(i.PostalCode, nubmersPattern));
-
             return customers.Where(i => !Regex.IsMatch(i.PostalCode, nubmersPattern) || string.IsNullOrEmpty(i.Region) || !Regex.IsMatch(i.Phone, bracesPattern));
         }
 
